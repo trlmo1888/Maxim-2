@@ -244,7 +244,7 @@ class IOSTimer {
             pauseBtn.textContent = 'Pausar';
             document.getElementById('timerDisplay').classList.remove('timer-pulse');
         } else {
-            pauseBtn.textContent = 'Reanudar';
+            pauseBtn.textContent = 'Continuar';
             document.getElementById('timerDisplay').classList.add('timer-pulse');
         }
 
