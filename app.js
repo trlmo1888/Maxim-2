@@ -1,6 +1,4 @@
 // MAXIM - Card Revelation App
-// Redesigned to match original interface
-
 // App State
 const state = {
     selectedSuit: null,
@@ -63,18 +61,27 @@ function generateSiStebbins() {
     return deck;
 }
 
-// Navigation
+// Navigation Functions
 function showScreen(screenId) {
-    document.querySelectorAll('.screen, .perform-screen, .results-screen, .settings-screen').forEach(s => {
-        s.classList.remove('active');
-    });
-    document.getElementById(screenId).classList.add('active');
+    const allScreens = document.querySelectorAll('.screen, .perform-screen, .results-screen, .settings-screen');
+    allScreens.forEach(s => s.classList.remove('active'));
+    
+    const screen = document.getElementById(screenId);
+    if (screen) {
+        screen.classList.add('active');
+    }
     vibrate(30);
 }
 
 function showMainScreen() {
     showScreen('mainScreen');
     resetSelection();
+}
+
+function showTimerFirst() {
+    if (typeof iosTimer !== 'undefined' && iosTimer) {
+        iosTimer.open();
+    }
 }
 
 function showPerformScreen() {
@@ -90,19 +97,15 @@ function showResultsScreen() {
     showScreen('resultsScreen');
 }
 
-// Card Selection
 // Card Selection - Step by Step
 function selectSuitAndNext(suit) {
     state.selectedSuit = suit;
     vibrate(50);
     
-    // Highlight selected suit
-    document.querySelectorAll('.suit-button').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+    const buttons = document.querySelectorAll('.suit-button');
+    buttons.forEach(btn => btn.classList.remove('selected'));
     event.target.classList.add('selected');
     
-    // Wait a moment for visual feedback, then go to next screen
     setTimeout(() => {
         showRankScreen();
     }, 200);
@@ -112,33 +115,27 @@ function selectRankAndCalculate(rank) {
     state.selectedRank = rank;
     vibrate(50);
     
-    // Highlight selected rank
-    document.querySelectorAll('.rank-button').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+    const buttons = document.querySelectorAll('.rank-button');
+    buttons.forEach(btn => btn.classList.remove('selected'));
     event.target.classList.add('selected');
     
-    // Wait a moment for visual feedback, then calculate
     setTimeout(() => {
         calculateReveals();
     }, 200);
 }
 
-// Old functions (keep for compatibility)
 function selectSuit(suit) {
     state.selectedSuit = suit;
-    document.querySelectorAll('.suit-button').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+    const buttons = document.querySelectorAll('.suit-button');
+    buttons.forEach(btn => btn.classList.remove('selected'));
     event.target.classList.add('selected');
     vibrate(30);
 }
 
 function selectRank(rank) {
     state.selectedRank = rank;
-    document.querySelectorAll('.rank-button').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+    const buttons = document.querySelectorAll('.rank-button');
+    buttons.forEach(btn => btn.classList.remove('selected'));
     event.target.classList.add('selected');
     vibrate(30);
 }
@@ -146,9 +143,8 @@ function selectRank(rank) {
 function resetSelection() {
     state.selectedSuit = null;
     state.selectedRank = null;
-    document.querySelectorAll('.suit-button, .rank-button').forEach(btn => {
-        btn.classList.remove('selected');
-    });
+    const buttons = document.querySelectorAll('.suit-button, .rank-button');
+    buttons.forEach(btn => btn.classList.remove('selected'));
 }
 
 // Calculate Reveals
@@ -169,7 +165,6 @@ function calculateReveals() {
     displayResults(card, position);
     showResultsScreen();
     
-    // Update stats
     state.stats.performances++;
     state.stats.lastCard = card;
     saveState();
@@ -215,13 +210,12 @@ function displayResults(card, position) {
 }
 
 function launchQuickTimer(seconds) {
-    if (window.iosTimer) {
+    if (typeof iosTimer !== 'undefined' && iosTimer) {
         iosTimer.hours = 0;
         iosTimer.minutes = 0;
         iosTimer.seconds = seconds;
         iosTimer.open();
         
-        // Auto-start after a brief delay
         setTimeout(() => {
             iosTimer.start();
         }, 500);
@@ -249,8 +243,7 @@ function generateReveals(card, position, cardName) {
     const today = new Date();
     const dayOfMonth = today.getDate();
 
-    // Date Reveal
-    if (document.getElementById('dateReveal').checked) {
+    if (document.getElementById('dateReveal') && document.getElementById('dateReveal').checked) {
         const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
                        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
         const dateStr = `${dayOfMonth} de ${months[today.getMonth()]}`;
@@ -267,8 +260,7 @@ function generateReveals(card, position, cardName) {
         });
     }
 
-    // Spelling Reveal
-    if (document.getElementById('spellingReveal').checked) {
+    if (document.getElementById('spellingReveal') && document.getElementById('spellingReveal').checked) {
         const letterCount = cardName.replace(/\s/g, '').length;
         reveals.push({
             icon: '🔤',
@@ -281,7 +273,6 @@ function generateReveals(card, position, cardName) {
         });
     }
 
-    // Position Reveal
     reveals.push({
         icon: '📍',
         title: 'Posición Directa',
@@ -291,7 +282,6 @@ function generateReveals(card, position, cardName) {
         hasTimer: false
     });
 
-    // Lucky Number Reveal
     const luckyNumbers = [7, 13, 21];
     for (const lucky of luckyNumbers) {
         if (Math.abs(position - lucky) <= 2) {
@@ -310,112 +300,115 @@ function generateReveals(card, position, cardName) {
     return reveals.slice(0, 3);
 }
 
-function generateTimerHTML() {
-    return `
-        <div class="timer-display">
-            <div class="time">00:00</div>
-            <div class="timer-controls">
-                <button class="timer-btn" onclick="startTimer(this)">Start</button>
-                <button class="timer-btn" onclick="pauseTimer(this)">Pause</button>
-                <button class="timer-btn" onclick="resetTimer(this)">Reset</button>
-            </div>
-        </div>
-    `;
-}
-
-// Timer Functions
-function initializeTimers() {
-    // Timer functionality can be expanded here
-}
-
-function startTimer(btn) {
-    const timerDisplay = btn.closest('.timer-display');
-    const timeElement = timerDisplay.querySelector('.time');
-    
-    if (state.timer.isRunning) return;
-    
-    state.timer.isRunning = true;
-    state.timer.interval = setInterval(() => {
-        state.timer.seconds++;
-        const minutes = Math.floor(state.timer.seconds / 60);
-        const seconds = state.timer.seconds % 60;
-        timeElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    }, 1000);
-    
-    vibrate(30);
-}
-
-function pauseTimer(btn) {
-    if (!state.timer.isRunning) return;
-    
-    clearInterval(state.timer.interval);
-    state.timer.isRunning = false;
-    vibrate(30);
-}
-
-function resetTimer(btn) {
-    const timerDisplay = btn.closest('.timer-display');
-    const timeElement = timerDisplay.querySelector('.time');
-    
-    clearInterval(state.timer.interval);
-    state.timer.seconds = 0;
-    state.timer.isRunning = false;
-    timeElement.textContent = '00:00';
-    vibrate(30);
-}
-
 // Settings
 function changeStack() {
-    state.currentStack = document.getElementById('stackType').value;
-    saveState();
-    showNotification(`Stack cambiado a ${state.currentStack}`);
+    const selector = document.getElementById('stackType');
+    if (selector) {
+        state.currentStack = selector.value;
+        saveState();
+        updateStackDisplay();
+        showNotification(`Stack cambiado a ${state.currentStack}`);
+    }
 }
 
 // Utilities
 function showNotification(message) {
     const notif = document.getElementById('notification');
-    notif.textContent = message;
-    notif.classList.add('show');
-    setTimeout(() => notif.classList.remove('show'), 3000);
+    if (notif) {
+        notif.textContent = message;
+        notif.classList.add('show');
+        setTimeout(() => notif.classList.remove('show'), 3000);
+    }
 }
 
 function vibrate(pattern) {
-    if ('vibrate' in navigator && document.getElementById('vibrationOn')?.checked) {
-        navigator.vibrate(pattern);
+    if ('vibrate' in navigator) {
+        const vibrationOn = document.getElementById('vibrationOn');
+        if (!vibrationOn || vibrationOn.checked) {
+            navigator.vibrate(pattern);
+        }
     }
 }
 
 function saveState() {
-    localStorage.setItem('maximState', JSON.stringify(state));
+    try {
+        localStorage.setItem('maximState', JSON.stringify(state));
+    } catch (e) {
+        console.error('Error saving state:', e);
+    }
 }
 
 function loadState() {
-    const saved = localStorage.getItem('maximState');
-    if (saved) {
-        const data = JSON.parse(saved);
-        Object.assign(state, data);
-        state.timer.interval = null;
-        state.timer.isRunning = false;
+    try {
+        const saved = localStorage.getItem('maximState');
+        if (saved) {
+            const data = JSON.parse(saved);
+            Object.assign(state, data);
+            state.timer.interval = null;
+            state.timer.isRunning = false;
+        }
+    } catch (e) {
+        console.error('Error loading state:', e);
     }
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    loadState();
+function updateStackDisplay() {
+    const stackList = document.getElementById('stackCardsList');
+    const stackName = document.getElementById('currentStackName');
     
-    // Set stack selector
-    if (document.getElementById('stackType')) {
-        document.getElementById('stackType').value = state.currentStack;
+    if (!stackList) return;
+    
+    const currentStack = stacks[state.currentStack];
+    const stackNames = {
+        'mnemonica': 'Mnemonica (Tamariz)',
+        'aronson': 'Aronson Stack',
+        'eight-kings': 'Eight Kings',
+        'si-stebbins': 'Si Stebbins',
+        'custom': 'Stack Personalizado'
+    };
+    
+    if (stackName) {
+        stackName.textContent = stackNames[state.currentStack] || 'Stack Desconocido';
     }
     
-    console.log('MAXIM initialized');
+    stackList.innerHTML = currentStack.map((card, index) => `
+        <div style="
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 10px 5px;
+            text-align: center;
+            font-size: 12px;
+        ">
+            <div style="font-weight: 600; margin-bottom: 3px;">${index + 1}</div>
+            <div style="font-size: 18px;">${card}</div>
+        </div>
+    `).join('');
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('MAXIM: DOM loaded');
+    
+    loadState();
+    
+    const stackType = document.getElementById('stackType');
+    if (stackType) {
+        stackType.value = state.currentStack;
+    }
+    
+    updateStackDisplay();
+    
+    console.log('MAXIM: Initialized');
 });
 
 // Service Worker
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
+    window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(reg => console.log('SW registered'))
             .catch(err => console.log('SW registration failed'));
     });
 }
+
+console.log('MAXIM: app.js loaded');
