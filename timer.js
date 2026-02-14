@@ -146,9 +146,11 @@ class IOSTimer {
 
     centerItem(picker, index) {
         const itemHeight = 40;
-        // Offset para centrar (item seleccionado en posición 4)
+        // El item en índice 4 del padding debe estar centrado
+        // Entonces el offset es (index - 4) * itemHeight
         const offset = (index - 4) * itemHeight;
-        picker.style.transform = `translateY(-${offset}px)`;
+        picker.style.transform = `translateY(${-offset}px)`;
+        picker.style.transition = 'transform 0.3s ease';
     }
 
     scrollToValue(pickerId, value) {
