@@ -3,6 +3,8 @@
 const state = {
     selectedSuit: null,
     selectedRank: null,
+    targetCard: null, // Carta que el espectador nombró
+    keyCard: null, // Carta de abajo que vemos
     currentStack: 'mnemonica',
     timer: {
         seconds: 0,
@@ -79,12 +81,8 @@ function showMainScreen() {
 }
 
 function showTimerFirst() {
-    // Abrir temporizador cuando se presiona Ejecutar
-    setTimeout(() => {
-        if (typeof iosTimer !== 'undefined' && iosTimer) {
-            iosTimer.open();
-        }
-    }, 100);
+    // Ejecutar → Mostrar pantalla de palos (carta objetivo)
+    showPerformScreen();
 }
 
 function showPerformScreen() {
@@ -118,12 +116,20 @@ function selectRankAndCalculate(rank) {
     state.selectedRank = rank;
     vibrate(50);
     
-    const buttons = document.querySelectorAll('.rank-button');
-    buttons.forEach(btn => btn.classList.remove('selected'));
+    // Highlight selected rank
+    document.querySelectorAll('.rank-button').forEach(btn => {
+        btn.classList.remove('selected');
+    });
     event.target.classList.add('selected');
     
+    // Guardar carta objetivo (la que buscaremos)
+    state.targetCard = formatCard(state.selectedRank, state.selectedSuit);
+    
+    // Abrir temporizador
     setTimeout(() => {
-        calculateReveals();
+        if (typeof iosTimer !== 'undefined' && iosTimer) {
+            iosTimer.open();
+        }
     }, 200);
 }
 
@@ -148,6 +154,59 @@ function resetSelection() {
     state.selectedRank = null;
     const buttons = document.querySelectorAll('.suit-button, .rank-button');
     buttons.forEach(btn => btn.classList.remove('selected'));
+}
+
+// Key Card Selection (después del timer)
+function selectKeySuitAndNext(suit) {
+    state.selectedSuit = suit;
+    vibrate(50);
+    
+    document.querySelectorAll('.suit-button').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    event.target.classList.add('selected');
+    
+    setTimeout(() => {
+        showScreen('keyCardRankScreen');
+    }, 200);
+}
+
+function selectKeyRankAndCalculate(rank) {
+    state.selectedRank = rank;
+    state.keyCard = formatCard(rank, state.selectedSuit);
+    vibrate(50);
+    
+    document.querySelectorAll('.rank-button').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    event.target.classList.add('selected');
+    
+    setTimeout(() => {
+        calculateTargetPosition();
+    }, 200);
+}
+
+function calculateTargetPosition() {
+    // Calcular posición de la carta objetivo basada en la key card
+    const stack = stacks[state.currentStack];
+    const keyPosition = stack.indexOf(state.keyCard) + 1;
+    const targetPosition = stack.indexOf(state.targetCard) + 1;
+    
+    if (keyPosition === 0 || targetPosition === 0) {
+        showNotification('Error: Carta no encontrada en el stack');
+        return;
+    }
+    
+    // Calcular distancia
+    let distance;
+    if (targetPosition > keyPosition) {
+        distance = targetPosition - keyPosition;
+    } else {
+        distance = (52 - keyPosition) + targetPosition;
+    }
+    
+    displayTargetResults(distance);
+    showResultsScreen();
 }
 
 // Calculate Reveals
@@ -188,6 +247,36 @@ function formatCard(rank, suit) {
 function findPosition(card) {
     const stack = stacks[state.currentStack];
     return stack.indexOf(card) + 1;
+}
+
+function displayTargetResults(distance) {
+    const targetName = getCardName(state.targetCard);
+    const keyName = getCardName(state.keyCard);
+    
+    document.getElementById('selectedCardName').textContent = targetName;
+    
+    const container = document.getElementById('revealMethods');
+    
+    container.innerHTML = `
+        <div class="reveal-card">
+            <h3>🎯 Carta Objetivo</h3>
+            <p>${targetName}</p>
+        </div>
+        
+        <div class="reveal-card">
+            <h3>🔑 Carta Clave (abajo)</h3>
+            <p>${keyName}</p>
+        </div>
+        
+        <div class="reveal-card">
+            <h3>📍 Ubicación</h3>
+            <div class="reveal-number">${distance}</div>
+            <p class="reveal-instruction">
+                ${targetName} está <strong>${distance} cartas desde abajo</strong><br>
+                (o ${52 - distance} desde arriba)
+            </p>
+        </div>
+    `;
 }
 
 function displayResults(card, position) {
