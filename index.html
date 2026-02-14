@@ -615,12 +615,7 @@
                 <span>Ejecutar</span>
             </button>
 
-            <div class="menu-grid">
-                <button class="menu-item" onclick="showScreen('stackScreen')">
-                    <div class="menu-icon">🎴</div>
-                    <div class="menu-label">Stack</div>
-                </button>
-
+            <div class="menu-grid" style="grid-template-columns: repeat(2, 1fr);">
                 <button class="menu-item" onclick="showScreen('settingsScreen')">
                     <div class="menu-icon">⚙️</div>
                     <div class="menu-label">Ajustes</div>
@@ -637,11 +632,11 @@
         <div id="performScreen" class="perform-screen">
             <div class="header">
                 <button class="back-button" onclick="showMainScreen()">←</button>
-                <div class="header-title">Carta Objetivo</div>
+                <div class="header-title">Carta del Espectador</div>
             </div>
 
             <div class="card-selector-section">
-                <div class="section-label">¿Qué carta buscarás?</div>
+                <div class="section-label">Selecciona el Palo</div>
                 <div class="suits-grid">
                     <button class="suit-button" onclick="selectSuitAndNext('hearts')">♥</button>
                     <button class="suit-button" onclick="selectSuitAndNext('diamonds')">♦</button>
@@ -655,11 +650,11 @@
         <div id="rankScreen" class="perform-screen">
             <div class="header">
                 <button class="back-button" onclick="showPerformScreen()">←</button>
-                <div class="header-title">Carta Objetivo</div>
+                <div class="header-title">Carta del Espectador</div>
             </div>
 
             <div class="card-selector-section">
-                <div class="section-label">Valor de la Carta</div>
+                <div class="section-label">Selecciona el Valor</div>
                 <div class="ranks-grid">
                     <button class="rank-button" onclick="selectRankAndCalculate('A')">A</button>
                     <button class="rank-button" onclick="selectRankAndCalculate('2')">2</button>
@@ -755,6 +750,18 @@
                         <option value="si-stebbins">Si Stebbins</option>
                         <option value="custom">Stack Personalizado</option>
                     </select>
+                    <button onclick="showScreen('stackScreen')" style="
+                        margin-top: 15px;
+                        width: 100%;
+                        padding: 15px;
+                        background: linear-gradient(135deg, #c83e51 0%, #e84a5f 100%);
+                        border: none;
+                        border-radius: 12px;
+                        color: white;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">Ver Stack Completo</button>
                 </div>
 
                 <div class="settings-group">
@@ -829,7 +836,7 @@
         </div>
     </div>
 
-    <script src="timer.js?v=4"></script>
-    <script src="app.js?v=4"></script>
+    <script src="timer.js?v=5"></script>
+    <script src="app.js?v=5"></script>
 </body>
 </html>
