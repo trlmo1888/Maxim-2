@@ -626,7 +626,7 @@
                     <div class="menu-label">Ajustes</div>
                 </button>
 
-                <button class="menu-item" onclick="showScreen('helpScreen')">
+                <button class="menu-item" onclick="showScreen('infoScreen')">
                     <div class="menu-icon">ℹ️</div>
                     <div class="menu-label">Info</div>
                 </button>
@@ -700,89 +700,75 @@
                 <div class="header-title">Ajustes</div>
             </div>
 
-            <div class="settings-group">
-                <h3>Tipo de Stack</h3>
-                <select id="stackType" onchange="changeStack()">
-                    <option value="mnemonica">Mnemonica (Tamariz)</option>
-                    <option value="aronson">Aronson Stack</option>
-                    <option value="eight-kings">Eight Kings</option>
-                    <option value="si-stebbins">Si Stebbins</option>
-                    <option value="custom">Stack Personalizado</option>
-                </select>
-            </div>
+            <div style="padding: 20px; height: calc(100vh - 80px); overflow-y: auto;">
+                <div class="settings-group">
+                    <h3>Tipo de Stack</h3>
+                    <select id="stackType" onchange="changeStack()">
+                        <option value="mnemonica">Mnemonica (Tamariz)</option>
+                        <option value="aronson">Aronson Stack</option>
+                        <option value="eight-kings">Eight Kings</option>
+                        <option value="si-stebbins">Si Stebbins</option>
+                        <option value="custom">Stack Personalizado</option>
+                    </select>
+                </div>
 
-            <div class="settings-group">
-                <h3>Opciones de Revelación</h3>
-                <div class="setting-item">
-                    <span>Revelación por Fecha</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="dateReveal" checked>
-                        <span class="slider"></span>
-                    </label>
+                <div class="settings-group">
+                    <h3>Opciones de Revelación</h3>
+                    <div class="setting-item">
+                        <span>Revelación por Fecha</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="dateReveal" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Revelación por Deletreo</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="spellingReveal" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Revelación por Cumpleaños</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="birthdayReveal" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Función Temporizador</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="timerFeature" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
-                <div class="setting-item">
-                    <span>Revelación por Deletreo</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="spellingReveal" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <span>Revelación por Cumpleaños</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="birthdayReveal" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <span>Función Temporizador</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="timerFeature" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
 
-            <div class="settings-group">
-                <h3>Notificaciones</h3>
-                <div class="setting-item">
-                    <span>Vibración</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="vibrationOn" checked>
-                        <span class="slider"></span>
-                    </label>
+                <div class="settings-group">
+                    <h3>Notificaciones</h3>
+                    <div class="setting-item">
+                        <span>Vibración</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="vibrationOn" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Placeholder screens -->
-        <div id="profilesScreen" class="screen">
-            <div class="header">
-                <button class="back-button" onclick="showMainScreen()">←</button>
-                <div class="header-title">Perfiles</div>
-            </div>
-            <div class="settings-group">
-                <p>Función de perfiles de espectadores próximamente...</p>
-            </div>
-        </div>
-
+        <!-- Stack Screen -->
         <div id="stackScreen" class="screen">
             <div class="header">
                 <button class="back-button" onclick="showMainScreen()">←</button>
-                <div class="header-title">Editor de Stack</div>
+                <div class="header-title">Stack Actual</div>
             </div>
-            <div class="settings-group">
-                <p>Editor visual de stack próximamente...</p>
-            </div>
-        </div>
-
-        <div id="historyScreen" class="screen">
-            <div class="header">
-                <button class="back-button" onclick="showMainScreen()">←</button>
-                <div class="header-title">Historial</div>
-            </div>
-            <div class="settings-group">
-                <p>Historial de presentaciones próximamente...</p>
+            
+            <div style="padding: 20px; height: calc(100vh - 80px); overflow-y: auto;">
+                <h3 id="currentStackName" style="margin-bottom: 15px; color: #e84a5f;">Mnemonica (Tamariz)</h3>
+                <div id="stackCardsList" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                    <!-- Las cartas se generarán aquí -->
+                </div>
             </div>
         </div>
 
@@ -793,23 +779,12 @@
             </div>
             <div class="settings-group">
                 <h3>Acerca de MAXIM</h3>
-                <p style="line-height: 1.6; opacity: 0.9;">MAXIM es una aplicación de revelación de cartas encubierta diseñada para magos profesionales. Calcula revelaciones perfectas instantáneamente para cualquier carta nombrada.</p>
-            </div>
-        </div>
-
-        <div id="helpScreen" class="screen">
-            <div class="header">
-                <button class="back-button" onclick="showMainScreen()">←</button>
-                <div class="header-title">Ayuda</div>
-            </div>
-            <div class="settings-group">
-                <h3>Inicio Rápido</h3>
-                <p style="line-height: 1.6; opacity: 0.9;">1. Toca Ejecutar<br>2. Selecciona la carta del espectador<br>3. Obtén revelaciones instantáneas<br>4. ¡Realiza el milagro!</p>
+                <p style="line-height: 1.6; opacity: 0.9;">MAXIM es una aplicación de revelación de cartas diseñada para magos profesionales. Calcula revelaciones perfectas usando stacks memorizados.</p>
             </div>
         </div>
     </div>
 
-    <script src="timer.js"></script>
-    <script src="app.js"></script>
+    <script src="timer.js?v=2"></script>
+    <script src="app.js?v=2"></script>
 </body>
 </html>
