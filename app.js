@@ -209,6 +209,106 @@ function calculateTargetPosition() {
     showResultsScreen();
 }
 
+// Función para encontrar frase de deletreo
+function findSpellingPhrase(targetDistance) {
+    const targetName = getCardName(state.targetCard);
+    const stack = stacks[state.currentStack];
+    
+    // Variantes de nombres de cartas
+    const variants = [
+        targetName, // "Rey de Diamantes"
+        targetName.replace(' de ', ' '), // "Rey Diamantes"
+        targetName.split(' de ')[0], // "Rey"
+        targetName.split(' de ')[1] // "Diamantes"
+    ];
+    
+    let result = null;
+    
+    // Probar desde arriba
+    for (let removeCount = 0; removeCount <= 52; removeCount++) {
+        for (const variant of variants) {
+            const letterCount = variant.replace(/\s/g, '').length;
+            const finalPosition = removeCount + letterCount;
+            
+            if (finalPosition === targetDistance) {
+                result = {
+                    phrase: variant,
+                    fromTop: true,
+                    remove: removeCount,
+                    letterCount: letterCount,
+                    exact: true
+                };
+                return result;
+            }
+        }
+    }
+    
+    // Probar desde abajo
+    for (let removeCount = 0; removeCount <= 52; removeCount++) {
+        for (const variant of variants) {
+            const letterCount = variant.replace(/\s/g, '').length;
+            const finalPosition = removeCount + letterCount;
+            
+            if (finalPosition === (52 - targetDistance + 1)) {
+                result = {
+                    phrase: variant,
+                    fromTop: false,
+                    remove: removeCount,
+                    letterCount: letterCount,
+                    exact: true
+                };
+                return result;
+            }
+        }
+    }
+    
+    // Si no encontramos exacto, buscar el más cercano
+    let bestMatch = null;
+    let minRemove = 999;
+    
+    for (let removeCount = 0; removeCount <= 30; removeCount++) {
+        for (const variant of variants) {
+            const letterCount = variant.replace(/\s/g, '').length;
+            const finalPositionTop = removeCount + letterCount;
+            const finalPositionBottom = removeCount + letterCount;
+            
+            // Desde arriba
+            if (finalPositionTop > targetDistance && removeCount < minRemove) {
+                bestMatch = {
+                    phrase: variant,
+                    fromTop: true,
+                    remove: removeCount,
+                    letterCount: letterCount,
+                    exact: false,
+                    needsAdjust: finalPositionTop - targetDistance
+                };
+                minRemove = removeCount;
+            }
+            
+            // Desde abajo
+            if (finalPositionBottom > (52 - targetDistance + 1) && removeCount < minRemove) {
+                bestMatch = {
+                    phrase: variant,
+                    fromTop: false,
+                    remove: removeCount,
+                    letterCount: letterCount,
+                    exact: false,
+                    needsAdjust: finalPositionBottom - (52 - targetDistance + 1)
+                };
+                minRemove = removeCount;
+            }
+        }
+    }
+    
+    return bestMatch || {
+        phrase: targetName,
+        fromTop: true,
+        remove: 0,
+        letterCount: targetName.replace(/\s/g, '').length,
+        exact: false
+    };
+}
+
 // Calculate Reveals
 function calculateReveals() {
     if (!state.selectedSuit || !state.selectedRank) {
@@ -253,29 +353,69 @@ function displayTargetResults(distance) {
     const targetName = getCardName(state.targetCard);
     const keyName = getCardName(state.keyCard);
     
+    // Calcular frase de deletreo
+    const spellingResult = findSpellingPhrase(distance);
+    
     document.getElementById('selectedCardName').textContent = targetName;
     
     const container = document.getElementById('revealMethods');
     
+    let spellingHTML = '';
+    if (spellingResult.exact) {
+        const direction = spellingResult.fromTop ? 'arriba' : 'abajo';
+        spellingHTML = `
+            <div class="reveal-card">
+                <h3>💬 Revelación por Frase</h3>
+                <p><strong>"${spellingResult.phrase}"</strong></p>
+                <div class="reveal-number">${spellingResult.letterCount} letras</div>
+                <p class="reveal-instruction">
+                    ${spellingResult.remove > 0 ? 
+                        `Quita ${spellingResult.remove} cartas desde ${direction}<br>` : 
+                        ''
+                    }
+                    Deletrea "${spellingResult.phrase}" (${spellingResult.letterCount} letras)<br>
+                    ¡La última carta será ${targetName}!
+                </p>
+            </div>
+        `;
+    } else if (spellingResult.needsAdjust) {
+        const direction = spellingResult.fromTop ? 'arriba' : 'abajo';
+        const adjust = spellingResult.needsAdjust;
+        spellingHTML = `
+            <div class="reveal-card">
+                <h3>💬 Revelación por Frase (Ajustada)</h3>
+                <p><strong>"${spellingResult.phrase}"</strong></p>
+                <div class="reveal-number">${spellingResult.letterCount} letras</div>
+                <p class="reveal-instruction">
+                    Quita ${spellingResult.remove + adjust} cartas desde ${direction}<br>
+                    Deletrea "${spellingResult.phrase}" (${spellingResult.letterCount} letras)<br>
+                    La última será ${targetName}
+                </p>
+            </div>
+        `;
+    }
+    
     container.innerHTML = `
         <div class="reveal-card">
-            <h3>🎯 Carta Objetivo</h3>
+            <h3>🎯 Carta Buscada</h3>
             <p>${targetName}</p>
         </div>
         
         <div class="reveal-card">
-            <h3>🔑 Carta Clave (abajo)</h3>
+            <h3>🔑 Carta Vista (abajo)</h3>
             <p>${keyName}</p>
         </div>
         
         <div class="reveal-card">
-            <h3>📍 Ubicación</h3>
+            <h3>📍 Ubicación Directa</h3>
             <div class="reveal-number">${distance}</div>
             <p class="reveal-instruction">
                 ${targetName} está <strong>${distance} cartas desde abajo</strong><br>
                 (o ${52 - distance} desde arriba)
             </p>
         </div>
+        
+        ${spellingHTML}
     `;
 }
 
