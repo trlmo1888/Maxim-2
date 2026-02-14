@@ -79,9 +79,12 @@ function showMainScreen() {
 }
 
 function showTimerFirst() {
-    if (typeof iosTimer !== 'undefined' && iosTimer) {
-        iosTimer.open();
-    }
+    // Abrir temporizador cuando se presiona Ejecutar
+    setTimeout(() => {
+        if (typeof iosTimer !== 'undefined' && iosTimer) {
+            iosTimer.open();
+        }
+    }, 100);
 }
 
 function showPerformScreen() {
