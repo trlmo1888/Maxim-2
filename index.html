@@ -637,11 +637,11 @@
         <div id="performScreen" class="perform-screen">
             <div class="header">
                 <button class="back-button" onclick="showMainScreen()">←</button>
-                <div class="header-title">Seleccionar Palo</div>
+                <div class="header-title">Carta Objetivo</div>
             </div>
 
             <div class="card-selector-section">
-                <div class="section-label">Elige el Palo de la Carta</div>
+                <div class="section-label">¿Qué carta buscarás?</div>
                 <div class="suits-grid">
                     <button class="suit-button" onclick="selectSuitAndNext('hearts')">♥</button>
                     <button class="suit-button" onclick="selectSuitAndNext('diamonds')">♦</button>
@@ -655,11 +655,11 @@
         <div id="rankScreen" class="perform-screen">
             <div class="header">
                 <button class="back-button" onclick="showPerformScreen()">←</button>
-                <div class="header-title">Seleccionar Valor</div>
+                <div class="header-title">Carta Objetivo</div>
             </div>
 
             <div class="card-selector-section">
-                <div class="section-label">Elige el Valor de la Carta</div>
+                <div class="section-label">Valor de la Carta</div>
                 <div class="ranks-grid">
                     <button class="rank-button" onclick="selectRankAndCalculate('A')">A</button>
                     <button class="rank-button" onclick="selectRankAndCalculate('2')">2</button>
@@ -674,6 +674,51 @@
                     <button class="rank-button" onclick="selectRankAndCalculate('J')">J</button>
                     <button class="rank-button" onclick="selectRankAndCalculate('Q')">Q</button>
                     <button class="rank-button" onclick="selectRankAndCalculate('K')">K</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Card Screen - Step 3: After Timer -->
+        <div id="keyCardSuitScreen" class="perform-screen">
+            <div class="header">
+                <button class="back-button" onclick="showMainScreen()">←</button>
+                <div class="header-title">Carta de Abajo</div>
+            </div>
+
+            <div class="card-selector-section">
+                <div class="section-label">¿Qué carta viste abajo?</div>
+                <div class="suits-grid">
+                    <button class="suit-button" onclick="selectKeySuitAndNext('hearts')">♥</button>
+                    <button class="suit-button" onclick="selectKeySuitAndNext('diamonds')">♦</button>
+                    <button class="suit-button" onclick="selectKeySuitAndNext('clubs')">♣</button>
+                    <button class="suit-button" onclick="selectKeySuitAndNext('spades')">♠</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Card Screen - Step 4: Select Key Rank -->
+        <div id="keyCardRankScreen" class="perform-screen">
+            <div class="header">
+                <button class="back-button" onclick="showScreen('keyCardSuitScreen')">←</button>
+                <div class="header-title">Carta de Abajo</div>
+            </div>
+
+            <div class="card-selector-section">
+                <div class="section-label">Valor de la Carta</div>
+                <div class="ranks-grid">
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('A')">A</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('2')">2</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('3')">3</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('4')">4</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('5')">5</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('6')">6</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('7')">7</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('8')">8</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('9')">9</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('10')">10</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('J')">J</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('Q')">Q</button>
+                    <button class="rank-button" onclick="selectKeyRankAndCalculate('K')">K</button>
                 </div>
             </div>
         </div>
@@ -761,7 +806,7 @@
         <div id="stackScreen" class="screen">
             <div class="header">
                 <button class="back-button" onclick="showMainScreen()">←</button>
-                <div class="header-title">Stack Actual</div>
+                <div class="header-title">Stack</div>
             </div>
             
             <div style="padding: 20px; height: calc(100vh - 80px); overflow-y: auto;">
@@ -784,7 +829,7 @@
         </div>
     </div>
 
-    <script src="timer.js?v=3"></script>
-    <script src="app.js?v=3"></script>
+    <script src="timer.js?v=4"></script>
+    <script src="app.js?v=4"></script>
 </body>
 </html>
