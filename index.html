@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#2d1b4e">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>MAXIM</title>
+    <title>MAXIM ACAAN</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -607,7 +607,7 @@
                 <div class="logo-circle">
                     <span class="letter">M</span>
                 </div>
-                <div class="app-name">MAXIM</div>
+                <div class="app-name">MAXIM ACAAN</div>
             </div>
 
             <button class="perform-button" onclick="showTimerFirst()">
@@ -615,16 +615,20 @@
                 <span>Ejecutar</span>
             </button>
 
-            <div class="menu-grid" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="menu-grid" style="grid-template-columns: 1fr;">
                 <button class="menu-item" onclick="showScreen('settingsScreen')">
                     <div class="menu-icon">⚙️</div>
                     <div class="menu-label">Ajustes</div>
                 </button>
+            </div>
 
-                <button class="menu-item" onclick="showScreen('infoScreen')">
-                    <div class="menu-icon">ℹ️</div>
-                    <div class="menu-label">Info</div>
-                </button>
+            <div style="text-align: center; margin-top: 30px; opacity: 0.7; font-size: 14px;">
+                <div id="currentStackDisplay" style="margin-bottom: 10px;">
+                    Stack: <span id="stackNameHome">Mnemonica</span>
+                </div>
+                <div style="opacity: 0.5; font-size: 12px;">
+                    Créditos: T.P.
+                </div>
             </div>
         </div>
 
@@ -632,11 +636,11 @@
         <div id="performScreen" class="perform-screen">
             <div class="header">
                 <button class="back-button" onclick="showMainScreen()">←</button>
-                <div class="header-title">Carta del Espectador</div>
+                <div class="header-title">Selecciona Palo</div>
             </div>
 
             <div class="card-selector-section">
-                <div class="section-label">Selecciona el Palo</div>
+                <div class="section-label">Palo</div>
                 <div class="suits-grid">
                     <button class="suit-button" onclick="selectSuitAndNext('hearts')">♥</button>
                     <button class="suit-button" onclick="selectSuitAndNext('diamonds')">♦</button>
@@ -650,11 +654,11 @@
         <div id="rankScreen" class="perform-screen">
             <div class="header">
                 <button class="back-button" onclick="showPerformScreen()">←</button>
-                <div class="header-title">Carta del Espectador</div>
+                <div class="header-title">Selecciona Valor</div>
             </div>
 
             <div class="card-selector-section">
-                <div class="section-label">Selecciona el Valor</div>
+                <div class="section-label">Valor</div>
                 <div class="ranks-grid">
                     <button class="rank-button" onclick="selectRankAndCalculate('A')">A</button>
                     <button class="rank-button" onclick="selectRankAndCalculate('2')">2</button>
@@ -677,11 +681,11 @@
         <div id="keyCardSuitScreen" class="perform-screen">
             <div class="header">
                 <button class="back-button" onclick="showMainScreen()">←</button>
-                <div class="header-title">Carta de Abajo</div>
+                <div class="header-title">Selecciona Palo</div>
             </div>
 
             <div class="card-selector-section">
-                <div class="section-label">¿Qué carta viste abajo?</div>
+                <div class="section-label">Palo</div>
                 <div class="suits-grid">
                     <button class="suit-button" onclick="selectKeySuitAndNext('hearts')">♥</button>
                     <button class="suit-button" onclick="selectKeySuitAndNext('diamonds')">♦</button>
@@ -695,11 +699,11 @@
         <div id="keyCardRankScreen" class="perform-screen">
             <div class="header">
                 <button class="back-button" onclick="showScreen('keyCardSuitScreen')">←</button>
-                <div class="header-title">Carta de Abajo</div>
+                <div class="header-title">Selecciona Valor</div>
             </div>
 
             <div class="card-selector-section">
-                <div class="section-label">Valor de la Carta</div>
+                <div class="section-label">Valor</div>
                 <div class="ranks-grid">
                     <button class="rank-button" onclick="selectKeyRankAndCalculate('A')">A</button>
                     <button class="rank-button" onclick="selectKeyRankAndCalculate('2')">2</button>
@@ -836,8 +840,8 @@
         </div>
     </div>
 
-    <script src="timer.js?v=6"></script>
-    <script src="app.js?v=6"></script>
+    <script src="timer.js?v=7"></script>
+    <script src="app.js?v=7"></script>
 </body>
 </html>
 
