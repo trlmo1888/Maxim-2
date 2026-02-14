@@ -270,9 +270,9 @@ class IOSTimer {
         // Cerrar timer y continuar al juego
         this.close();
         
-        // Llamar a la función del juego para mostrar selección de palo
-        if (typeof showPerformScreen === 'function') {
-            showPerformScreen();
+        // Ir a pantalla de key card (carta de abajo)
+        if (typeof showScreen === 'function') {
+            showScreen('keyCardSuitScreen');
         }
     }
 
