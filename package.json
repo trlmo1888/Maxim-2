@@ -1,0 +1,31 @@
+{
+  "name": "maxim-card-magic",
+  "version": "1.0.0",
+  "description": "Covert card revelation app for professional magicians",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "dev": "python3 -m http.server 8000",
+    "build": "echo 'No build step required - static site'",
+    "deploy": "echo 'Deploy to GitHub Pages or your hosting service'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/maxim.git"
+  },
+  "keywords": [
+    "magic",
+    "card-tricks",
+    "magician",
+    "pwa",
+    "card-revelation",
+    "performance",
+    "entertainment"
+  ],
+  "author": "MAXIM Team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yourusername/maxim/issues"
+  },
+  "homepage": "https://github.com/yourusername/maxim#readme"
+}
