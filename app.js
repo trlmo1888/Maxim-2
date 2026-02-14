@@ -399,7 +399,23 @@ function changeStack() {
         state.currentStack = selector.value;
         saveState();
         updateStackDisplay();
+        updateHomeStackDisplay();
         showNotification(`Stack cambiado a ${state.currentStack}`);
+    }
+}
+
+function updateHomeStackDisplay() {
+    const stackNames = {
+        'mnemonica': 'Mnemonica',
+        'aronson': 'Aronson',
+        'eight-kings': 'Eight Kings',
+        'si-stebbins': 'Si Stebbins',
+        'custom': 'Personalizado'
+    };
+    
+    const el = document.getElementById('stackNameHome');
+    if (el) {
+        el.textContent = stackNames[state.currentStack] || state.currentStack;
     }
 }
 
@@ -490,6 +506,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     updateStackDisplay();
+    updateHomeStackDisplay();
     
     console.log('MAXIM: Initialized');
 });
