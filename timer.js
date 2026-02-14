@@ -1,9 +1,9 @@
-// iOS-Style Timer for MAXIM
+// iOS-Style Timer for MAXIM - VERSIÓN FINAL
 class IOSTimer {
     constructor() {
         this.hours = 0;
-        this.minutes = 15;
-        this.seconds = 0;
+        this.minutes = 0;
+        this.seconds = 15; // Default 15 segundos
         this.totalSeconds = 0;
         this.remainingSeconds = 0;
         this.interval = null;
@@ -23,16 +23,11 @@ class IOSTimer {
         modal.className = 'timer-modal';
         modal.innerHTML = `
             <div id="timerSetup" class="timer-setup">
-                <div class="timer-header">
-                    <h2>Temporizador</h2>
-                    <p>Configura el tiempo</p>
-                </div>
-
                 <div class="timer-picker-container">
                     <div class="picker-wheel">
                         <div class="picker-selector"></div>
                         <ul class="picker-list" id="hoursPicker">
-                            ${this.generatePickerItems(0, 23, 'horas')}
+                            ${this.generatePickerItems(0, 23, 'h')}
                         </ul>
                     </div>
 
@@ -61,16 +56,6 @@ class IOSTimer {
                     <button class="timer-action-btn timer-cancel-btn" onclick="iosTimer.close()">Cancelar</button>
                     <button class="timer-action-btn timer-start-btn" onclick="iosTimer.start()">Iniciar</button>
                 </div>
-
-                <div class="timer-options">
-                    <div class="timer-option">
-                        <span>Al finalizar</span>
-                        <div class="timer-option-value">
-                            <span>Detener reproducción</span>
-                            <span>›</span>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div id="timerRunning" class="timer-running">
@@ -81,7 +66,7 @@ class IOSTimer {
                                 stroke-dasharray="848" stroke-dashoffset="0" id="progressCircle"></circle>
                     </svg>
                     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                        <div class="timer-display" id="timerDisplay">15:00</div>
+                        <div class="timer-display" id="timerDisplay">00:15</div>
                     </div>
                 </div>
 
@@ -90,48 +75,51 @@ class IOSTimer {
                     <button class="timer-stop-btn" onclick="iosTimer.stop()">Detener</button>
                 </div>
             </div>
+
+            <div id="timerStopped" class="timer-stopped" style="display: none;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <div style="font-size: 80px; margin-bottom: 20px;">⏱️</div>
+                    <h2 style="font-size: 24px; margin-bottom: 10px;">Temporizador Detenido</h2>
+                    <p style="opacity: 0.7;">Continúa con el juego</p>
+                </div>
+                <button class="timer-continue-btn" onclick="iosTimer.continueToGame()">Continuar</button>
+            </div>
         `;
         document.body.appendChild(modal);
     }
 
     generatePickerItems(start, end, label) {
         let items = '';
-        // Add padding items
+        // Padding superior (4 items vacíos)
         for (let i = 0; i < 4; i++) {
-            items += `<li class="picker-item" data-value="">&nbsp;</li>`;
+            items += `<li class="picker-item">&nbsp;</li>`;
         }
         
+        // Números reales
         for (let i = start; i <= end; i++) {
-            const selected = (label === 'min' && i === 15) ? 'selected' : '';
-            items += `<li class="picker-item ${selected}" data-value="${i}">${i}</li>`;
+            items += `<li class="picker-item" data-value="${i}">${i}</li>`;
         }
         
-        // Add padding items
+        // Padding inferior (4 items vacíos)
         for (let i = 0; i < 4; i++) {
-            items += `<li class="picker-item" data-value="">&nbsp;</li>`;
+            items += `<li class="picker-item">&nbsp;</li>`;
         }
         
         return items;
     }
 
     setupEventListeners() {
-        // Hours picker
         this.setupPicker('hoursPicker', (value) => {
             this.hours = parseInt(value) || 0;
         });
 
-        // Minutes picker
         this.setupPicker('minutesPicker', (value) => {
             this.minutes = parseInt(value) || 0;
         });
 
-        // Seconds picker
         this.setupPicker('secondsPicker', (value) => {
             this.seconds = parseInt(value) || 0;
         });
-
-        // Initialize minutes to 15
-        this.scrollToValue('minutesPicker', 15);
     }
 
     setupPicker(pickerId, onChange) {
@@ -141,21 +129,26 @@ class IOSTimer {
         items.forEach((item, index) => {
             item.addEventListener('click', () => {
                 const value = item.getAttribute('data-value');
-                if (value === '') return;
+                if (!value) return;
                 
-                // Update selection
+                // Actualizar selección visual
                 items.forEach(i => i.classList.remove('selected'));
                 item.classList.add('selected');
                 
-                // Center the item
-                const itemHeight = 40;
-                const offset = (index - 4) * itemHeight;
-                picker.style.transform = `translateY(-${offset}px)`;
+                // Centrar el item seleccionado
+                this.centerItem(picker, index);
                 
-                // Trigger callback
+                // Callback
                 onChange(value);
             });
         });
+    }
+
+    centerItem(picker, index) {
+        const itemHeight = 40;
+        // Offset para centrar (item seleccionado en posición 4)
+        const offset = (index - 4) * itemHeight;
+        picker.style.transform = `translateY(-${offset}px)`;
     }
 
     scrollToValue(pickerId, value) {
@@ -163,24 +156,28 @@ class IOSTimer {
         const items = picker.querySelectorAll('.picker-item');
         
         items.forEach((item, index) => {
-            if (item.getAttribute('data-value') == value) {
+            const itemValue = item.getAttribute('data-value');
+            if (itemValue == value) {
                 item.classList.add('selected');
-                const itemHeight = 40;
-                const offset = (index - 4) * itemHeight;
-                picker.style.transform = `translateY(-${offset}px)`;
+                this.centerItem(picker, index);
+            } else {
+                item.classList.remove('selected');
             }
         });
     }
 
     open() {
         document.getElementById('timerModal').classList.add('active');
-        document.getElementById('timerSetup').classList.remove('hidden');
+        document.getElementById('timerSetup').style.display = 'flex';
         document.getElementById('timerRunning').classList.remove('active');
+        document.getElementById('timerStopped').style.display = 'none';
         
-        // Scroll to current values
-        this.scrollToValue('hoursPicker', this.hours);
-        this.scrollToValue('minutesPicker', this.minutes);
-        this.scrollToValue('secondsPicker', this.seconds);
+        // Scroll a valores por defecto (0h, 0min, 15s)
+        setTimeout(() => {
+            this.scrollToValue('hoursPicker', this.hours);
+            this.scrollToValue('minutesPicker', this.minutes);
+            this.scrollToValue('secondsPicker', this.seconds);
+        }, 100);
     }
 
     close() {
@@ -189,17 +186,14 @@ class IOSTimer {
     }
 
     setQuickTime(hours, minutes, seconds) {
-        // Set the time
         this.hours = hours;
         this.minutes = minutes;
         this.seconds = seconds;
         
-        // Update the pickers visually
         this.scrollToValue('hoursPicker', hours);
         this.scrollToValue('minutesPicker', minutes);
         this.scrollToValue('secondsPicker', seconds);
         
-        // Visual feedback
         if ('vibrate' in navigator) {
             navigator.vibrate(30);
         }
@@ -216,11 +210,10 @@ class IOSTimer {
         this.remainingSeconds = this.totalSeconds;
         this.isRunning = true;
 
-        // Switch to running view
-        document.getElementById('timerSetup').classList.add('hidden');
+        // Cambiar a vista de running
+        document.getElementById('timerSetup').style.display = 'none';
         document.getElementById('timerRunning').classList.add('active');
 
-        // Start countdown
         this.updateDisplay();
         this.updateProgress();
         
@@ -236,7 +229,6 @@ class IOSTimer {
             }
         }, 1000);
 
-        // Vibrate
         if ('vibrate' in navigator) {
             navigator.vibrate(50);
         }
@@ -254,7 +246,6 @@ class IOSTimer {
             document.getElementById('timerDisplay').classList.add('timer-pulse');
         }
 
-        // Vibrate
         if ('vibrate' in navigator) {
             navigator.vibrate(30);
         }
@@ -264,11 +255,24 @@ class IOSTimer {
         this.audio.pause();
         this.audio.currentTime = 0;
         clearInterval(this.interval);
-        this.close();
+        this.isRunning = false;
         
-        // Vibrate
+        // Mostrar pantalla "Continuar"
+        document.getElementById('timerRunning').classList.remove('active');
+        document.getElementById('timerStopped').style.display = 'flex';
+        
         if ('vibrate' in navigator) {
             navigator.vibrate(50);
+        }
+    }
+
+    continueToGame() {
+        // Cerrar timer y continuar al juego
+        this.close();
+        
+        // Llamar a la función del juego para mostrar selección de palo
+        if (typeof showPerformScreen === 'function') {
+            showPerformScreen();
         }
     }
 
@@ -276,19 +280,18 @@ class IOSTimer {
         clearInterval(this.interval);
         this.isRunning = false;
         
-        // Play alarm
+        // Reproducir alarma
         this.audio.play();
         
-        // Vibrate pattern
+        // Vibración
         if ('vibrate' in navigator) {
-            const vibratePattern = [200, 100, 200, 100, 200];
-            navigator.vibrate(vibratePattern);
+            navigator.vibrate([200, 100, 200, 100, 200]);
         }
 
-        // Show finish state
+        // Mostrar estado final
         document.getElementById('timerDisplay').textContent = '00:00';
         document.getElementById('timerDisplay').classList.add('timer-pulse');
-        document.getElementById('pauseBtn').classList.add('hidden');
+        document.getElementById('pauseBtn').style.display = 'none';
     }
 
     reset() {
@@ -298,9 +301,16 @@ class IOSTimer {
         this.audio.pause();
         this.audio.currentTime = 0;
         
-        document.getElementById('pauseBtn').classList.remove('hidden');
-        document.getElementById('pauseBtn').textContent = 'Pausar';
-        document.getElementById('timerDisplay').classList.remove('timer-pulse');
+        const pauseBtn = document.getElementById('pauseBtn');
+        if (pauseBtn) {
+            pauseBtn.style.display = 'block';
+            pauseBtn.textContent = 'Pausar';
+        }
+        
+        const display = document.getElementById('timerDisplay');
+        if (display) {
+            display.classList.remove('timer-pulse');
+        }
     }
 
     updateDisplay() {
@@ -312,7 +322,7 @@ class IOSTimer {
         if (hours > 0) {
             display = `${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         } else {
-            display = `${minutes}:${String(seconds).padStart(2, '0')}`;
+            display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
         document.getElementById('timerDisplay').textContent = display;
@@ -320,16 +330,17 @@ class IOSTimer {
 
     updateProgress() {
         const progress = this.remainingSeconds / this.totalSeconds;
-        const circumference = 2 * Math.PI * 135; // radius = 135
+        const circumference = 2 * Math.PI * 135;
         const offset = circumference * (1 - progress);
         
         document.getElementById('progressCircle').style.strokeDashoffset = offset;
     }
 }
 
-// Initialize timer
+// Inicializar timer
 let iosTimer;
 document.addEventListener('DOMContentLoaded', () => {
     iosTimer = new IOSTimer();
     iosTimer.init();
+    console.log('Timer initialized');
 });
