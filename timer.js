@@ -75,15 +75,6 @@ class IOSTimer {
                     <button class="timer-stop-btn" onclick="iosTimer.stop()">Detener</button>
                 </div>
             </div>
-
-            <div id="timerStopped" class="timer-stopped" style="display: none;">
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <div style="font-size: 80px; margin-bottom: 20px;">⏱️</div>
-                    <h2 style="font-size: 24px; margin-bottom: 10px;">Temporizador Detenido</h2>
-                    <p style="opacity: 0.7;">Continúa con el juego</p>
-                </div>
-                <button class="timer-continue-btn" onclick="iosTimer.continueToGame()">Continuar</button>
-            </div>
         `;
         document.body.appendChild(modal);
     }
@@ -146,9 +137,18 @@ class IOSTimer {
 
     centerItem(picker, index) {
         const itemHeight = 40;
-        // El item en índice 4 del padding debe estar centrado
-        // Entonces el offset es (index - 4) * itemHeight
-        const offset = (index - 4) * itemHeight;
+        // Queremos que el item seleccionado esté en el CENTRO (entre las líneas)
+        // El contenedor tiene 200px de alto, así que el centro está a 100px
+        // Cada item tiene 40px, el item debe estar centrado en 100px
+        // Entonces: (100 - 20) = 80px desde arriba
+        // El item en index 0 empieza en 0, queremos que esté en 80px
+        // Offset = index * 40 - 80
+        const containerCenter = 100; // Centro del contenedor de 200px
+        const itemCenter = 20; // Centro de un item de 40px
+        const targetPosition = containerCenter - itemCenter; // 80px
+        const currentPosition = index * itemHeight;
+        const offset = currentPosition - targetPosition;
+        
         picker.style.transform = `translateY(${-offset}px)`;
         picker.style.transition = 'transform 0.3s ease';
     }
@@ -259,9 +259,15 @@ class IOSTimer {
         clearInterval(this.interval);
         this.isRunning = false;
         
-        // Mostrar pantalla "Continuar"
-        document.getElementById('timerRunning').classList.remove('active');
-        document.getElementById('timerStopped').style.display = 'flex';
+        // Cerrar timer
+        document.getElementById('timerModal').classList.remove('active');
+        
+        // Ir DIRECTAMENTE a pantalla de key card
+        setTimeout(() => {
+            if (typeof showScreen === 'function') {
+                showScreen('keyCardSuitScreen');
+            }
+        }, 100);
         
         if ('vibrate' in navigator) {
             navigator.vibrate(50);
@@ -269,10 +275,8 @@ class IOSTimer {
     }
 
     continueToGame() {
-        // Cerrar timer y continuar al juego
+        // Esta función ya no se usa
         this.close();
-        
-        // Ir a pantalla de key card (carta de abajo)
         if (typeof showScreen === 'function') {
             showScreen('keyCardSuitScreen');
         }
