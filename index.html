@@ -836,7 +836,28 @@
         </div>
     </div>
 
-    <script src="timer.js?v=5"></script>
-    <script src="app.js?v=5"></script>
+    <script src="timer.js?v=6"></script>
+    <script src="app.js?v=6"></script>
 </body>
 </html>
+
+<style>
+/* CRITICAL: Pantallas separadas REALES */
+.perform-screen,
+.results-screen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: #2d1b4e !important;
+    z-index: 1000 !important;
+    display: none !important;
+}
+
+.perform-screen.active,
+.results-screen.active {
+    display: flex !important;
+    flex-direction: column !important;
+}
+</style>
