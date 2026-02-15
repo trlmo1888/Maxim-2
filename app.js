@@ -6,6 +6,7 @@ const state = {
     targetCard: null, // Carta que el espectador nombró
     keyCard: null, // Carta de abajo que vemos
     currentStack: 'mnemonica',
+    stopMode: 1, // 1 = detener directo, 2 = detener sonido primero
     timer: {
         seconds: 0,
         interval: null,
@@ -356,7 +357,7 @@ function displayTargetResults(distance) {
     // Calcular frase de deletreo
     const spellingResult = findSpellingPhrase(distance);
     
-    document.getElementById('selectedCardName').textContent = targetName;
+    document.getElementById('selectedCardName').textContent = 'Revelaciones';
     
     const container = document.getElementById('revealMethods');
     
@@ -397,25 +398,20 @@ function displayTargetResults(distance) {
     
     container.innerHTML = `
         <div class="reveal-card">
-            <h3>🎯 Carta Buscada</h3>
-            <p>${targetName}</p>
-        </div>
-        
-        <div class="reveal-card">
-            <h3>🔑 Carta Vista (abajo)</h3>
-            <p>${keyName}</p>
-        </div>
-        
-        <div class="reveal-card">
             <h3>📍 Ubicación Directa</h3>
             <div class="reveal-number">${distance}</div>
             <p class="reveal-instruction">
-                ${targetName} está <strong>${distance} cartas desde abajo</strong><br>
+                La carta está <strong>${distance} cartas desde abajo</strong><br>
                 (o ${52 - distance} desde arriba)
             </p>
         </div>
         
         ${spellingHTML}
+        
+        <div style="text-align: center; margin-top: 30px; padding: 20px; opacity: 0.7; font-size: 14px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div style="margin-bottom: 8px;">🎯 Carta Buscada: <strong>${targetName}</strong></div>
+            <div>🔑 Carta Vista: <strong>${keyName}</strong></div>
+        </div>
     `;
 }
 
@@ -544,6 +540,15 @@ function changeStack() {
     }
 }
 
+function changeStopMode() {
+    const selector = document.getElementById('stopMode');
+    if (selector) {
+        state.stopMode = parseInt(selector.value);
+        saveState();
+        showNotification(`Modo detener: ${state.stopMode}`);
+    }
+}
+
 function updateHomeStackDisplay() {
     const stackNames = {
         'mnemonica': 'Mnemonica',
@@ -643,6 +648,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const stackType = document.getElementById('stackType');
     if (stackType) {
         stackType.value = state.currentStack;
+    }
+    
+    const stopMode = document.getElementById('stopMode');
+    if (stopMode) {
+        stopMode.value = state.stopMode || 1;
     }
     
     updateStackDisplay();
