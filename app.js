@@ -9,7 +9,7 @@ const state = {
     stopMode: 1, // 1 = detener directo, 2 = detener sonido primero
     customStaticOuts: {}, // Se cargará con defaults
     dynamicOutsConfig: {
-        sumaMinutos: { enabled: true, adelantarSi: 12, adelantarMinutos: 1 },
+        sumaMinutos: { enabled: true, adelantarSi: 12, adelantarMinutos: 0 },
         letrasNombre: { enabled: true },
         sumaFecha: { enabled: true }
     },
@@ -783,10 +783,23 @@ function checkSumaMinutos(position) {
     let minutes = now.getMinutes();
     let seconds = now.getSeconds();
     
+    let willAdvance = false;
+    let advanceText = '';
+    
+    // Opción A: Si faltan menos de X segundos → adelantar 1 minuto (automático)
     const secondsUntilNext = 60 - seconds;
-    if (secondsUntilNext < state.dynamicOutsConfig.sumaMinutos.adelantarSi) {
+    if (state.dynamicOutsConfig.sumaMinutos.adelantarSi > 0 && secondsUntilNext < state.dynamicOutsConfig.sumaMinutos.adelantarSi) {
+        minutes += 1;
+        if (minutes >= 60) minutes -= 60;
+        willAdvance = true;
+        advanceText = 'En 1 min';
+    }
+    // Opción B: Adelantar X minutos (manual, siempre que X > 0)
+    else if (state.dynamicOutsConfig.sumaMinutos.adelantarMinutos > 0) {
         minutes += state.dynamicOutsConfig.sumaMinutos.adelantarMinutos;
         if (minutes >= 60) minutes -= 60;
+        willAdvance = true;
+        advanceText = `En ${state.dynamicOutsConfig.sumaMinutos.adelantarMinutos} min`;
     }
     
     const digit1 = Math.floor(minutes / 10);
@@ -794,11 +807,10 @@ function checkSumaMinutos(position) {
     const suma = digit1 + digit2;
     
     if (position === suma) {
-        const willAdvance = secondsUntilNext < state.dynamicOutsConfig.sumaMinutos.adelantarSi;
         return {
             name: "Suma de Minutos",
             text: willAdvance ? 
-                `En ${state.dynamicOutsConfig.sumaMinutos.adelantarMinutos} min, la hora sumará ${suma}` :
+                `${advanceText}, la hora sumará ${suma}` :
                 `La hora suma ${suma}`,
             position: suma,
             fromBottom: false
@@ -807,13 +819,12 @@ function checkSumaMinutos(position) {
     
     const posFromBottom = 53 - position;
     if (posFromBottom === suma) {
-        const willAdvance = secondsUntilNext < state.dynamicOutsConfig.sumaMinutos.adelantarSi;
         return {
             name: "Suma de Minutos",
             text: willAdvance ?
-                `En ${state.dynamicOutsConfig.sumaMinutos.adelantarMinutos} min, la hora sumará ${suma}` :
+                `${advanceText}, la hora sumará ${suma}` :
                 `La hora suma ${suma}`,
-            position: suma,
+            position: posFromBottom,
             fromBottom: true
         };
     }
