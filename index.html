@@ -615,15 +615,15 @@
                 <span>Ejecutar</span>
             </button>
 
-            <div class="menu-grid" style="grid-template-columns: 1fr;">
+            <div class="menu-grid" style="grid-template-columns: 1fr; margin-top: 20px;">
                 <button class="menu-item" onclick="showScreen('settingsScreen')">
                     <div class="menu-icon">⚙️</div>
                     <div class="menu-label">Ajustes</div>
                 </button>
             </div>
 
-            <div style="text-align: center; margin-top: 30px; opacity: 0.7; font-size: 14px;">
-                <div id="currentStackDisplay" style="margin-bottom: 10px;">
+            <div style="text-align: center; margin-top: auto; padding: 20px 0; opacity: 0.7; font-size: 14px;">
+                <div id="currentStackDisplay" style="margin-bottom: 8px;">
                     Stack: <span id="stackNameHome">Mnemonica</span>
                 </div>
                 <div style="opacity: 0.5; font-size: 12px;">
@@ -729,12 +729,13 @@
                 <div class="header-title">Revelaciones</div>
             </div>
 
-            <div class="selected-card-display">
-                <h2 id="selectedCardName"></h2>
-                <p>Carta Seleccionada</p>
-            </div>
+            <div style="height: calc(100vh - 80px); overflow-y: auto; padding-bottom: 40px;">
+                <div class="selected-card-display">
+                    <h2 id="selectedCardName"></h2>
+                </div>
 
-            <div class="reveal-methods" id="revealMethods"></div>
+                <div class="reveal-methods" id="revealMethods"></div>
+            </div>
         </div>
 
         <!-- Settings Screen -->
@@ -766,6 +767,18 @@
                         font-weight: 600;
                         cursor: pointer;
                     ">Ver Stack Completo</button>
+                </div>
+
+                <div class="settings-group">
+                    <h3>Modo Detener Timer</h3>
+                    <select id="stopMode" onchange="changeStopMode()">
+                        <option value="1">Modo 1: Detener directo</option>
+                        <option value="2">Modo 2: Parar sonido primero</option>
+                    </select>
+                    <p style="font-size: 12px; opacity: 0.7; margin-top: 10px;">
+                        Modo 1: Al detener va directo a siguiente pantalla<br>
+                        Modo 2: Primera vez para sonido, segunda vez continúa
+                    </p>
                 </div>
 
                 <div class="settings-group">
@@ -840,8 +853,8 @@
         </div>
     </div>
 
-    <script src="timer.js?v=8"></script>
-    <script src="app.js?v=8"></script>
+    <script src="timer.js?v=9"></script>
+    <script src="app.js?v=9"></script>
 </body>
 </html>
 
