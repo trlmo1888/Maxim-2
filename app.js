@@ -7,6 +7,12 @@ const state = {
     keyCard: null, // Carta de abajo que vemos
     currentStack: 'mnemonica',
     stopMode: 1, // 1 = detener directo, 2 = detener sonido primero
+    customStaticOuts: {}, // Se cargará con defaults
+    dynamicOutsConfig: {
+        sumaMinutos: { enabled: true, adelantarSi: 12, adelantarMinutos: 1 },
+        letrasNombre: { enabled: true },
+        sumaFecha: { enabled: true }
+    },
     timer: {
         seconds: 0,
         interval: null,
@@ -73,6 +79,14 @@ function showScreen(screenId) {
     if (screen) {
         screen.classList.add('active');
     }
+    
+    // Cargar contenido especial según pantalla
+    if (screenId === 'editOutsScreen') {
+        showEditOuts();
+    } else if (screenId === 'settingsScreen') {
+        loadDynamicOutsConfig();
+    }
+    
     vibrate(30);
 }
 
@@ -354,62 +368,59 @@ function displayTargetResults(distance) {
     const targetName = getCardName(state.targetCard);
     const keyName = getCardName(state.keyCard);
     
-    // Calcular frase de deletreo
-    const spellingResult = findSpellingPhrase(distance);
+    // Buscar la mejor OUT (Dynamic o Static)
+    const bestOut = findBestOut(distance, state.currentStack);
     
     document.getElementById('selectedCardName').textContent = 'Revelaciones';
     
     const container = document.getElementById('revealMethods');
     
-    let spellingHTML = '';
-    if (spellingResult.exact) {
-        const direction = spellingResult.fromTop ? 'arriba' : 'abajo';
-        spellingHTML = `
-            <div class="reveal-card">
-                <h3>💬 Revelación por Frase</h3>
-                <p><strong>"${spellingResult.phrase}"</strong></p>
-                <div class="reveal-number">${spellingResult.letterCount} letras</div>
-                <p class="reveal-instruction">
-                    ${spellingResult.remove > 0 ? 
-                        `Quita ${spellingResult.remove} cartas desde ${direction}<br>` : 
-                        ''
-                    }
-                    Deletrea "${spellingResult.phrase}" (${spellingResult.letterCount} letras)<br>
-                    ¡La última carta será ${targetName}!
-                </p>
-            </div>
-        `;
-    } else if (spellingResult.needsAdjust) {
-        const direction = spellingResult.fromTop ? 'arriba' : 'abajo';
-        const adjust = spellingResult.needsAdjust;
-        spellingHTML = `
-            <div class="reveal-card">
-                <h3>💬 Revelación por Frase (Ajustada)</h3>
-                <p><strong>"${spellingResult.phrase}"</strong></p>
-                <div class="reveal-number">${spellingResult.letterCount} letras</div>
-                <p class="reveal-instruction">
-                    Quita ${spellingResult.remove + adjust} cartas desde ${direction}<br>
-                    Deletrea "${spellingResult.phrase}" (${spellingResult.letterCount} letras)<br>
-                    La última será ${targetName}
-                </p>
-            </div>
-        `;
+    // Calcular posiciones
+    const posFromTop = distance;
+    const posFromBottom = 53 - distance;
+    
+    // Buscar carta que coincida con las letras
+    let matchingCard = null;
+    const stack = stacks[state.currentStack];
+    for (const card of stack) {
+        const cardName = getCardName(card);
+        const variants = [cardName, cardName.replace(' de ', ' ')];
+        
+        for (const variant of variants) {
+            const letterCount = variant.replace(/\s/g, '').length;
+            if (letterCount === distance || letterCount === posFromBottom) {
+                matchingCard = variant;
+                break;
+            }
+        }
+        if (matchingCard) break;
     }
     
     container.innerHTML = `
-        <div class="reveal-card">
-            <h3>📍 Ubicación Directa</h3>
-            <div class="reveal-number">${distance}</div>
-            <p class="reveal-instruction">
-                La carta está <strong>${distance} cartas desde abajo</strong><br>
-                (o ${52 - distance} desde arriba)
+        <div class="reveal-card" style="background: rgba(255, 255, 255, 0.15); padding: 25px;">
+            <h3 style="margin: 0 0 20px 0; font-size: 20px; color: #fff;">💬 ${bestOut.name}</h3>
+            <p style="font-size: 22px; font-weight: 600; margin: 15px 0; line-height: 1.5; color: #fff;">
+                ${bestOut.text}
             </p>
+            
+            ${matchingCard ? `
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2);">
+                    <p style="font-size: 18px; color: #fff; margin-bottom: 10px;">
+                        <strong>Deletrea: "${matchingCard}"</strong>
+                    </p>
+                </div>
+            ` : ''}
+            
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2);">
+                <p style="font-size: 18px; color: #fff; line-height: 1.8;">
+                    <strong>${posFromTop}</strong> desde arriba<br>
+                    <strong>${posFromBottom}</strong> desde abajo
+                </p>
+            </div>
         </div>
         
-        ${spellingHTML}
-        
-        <div style="text-align: center; margin-top: 30px; padding: 20px; opacity: 0.7; font-size: 14px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <div style="margin-bottom: 8px;">🎯 Carta Buscada: <strong>${targetName}</strong></div>
+        <div style="text-align: center; margin-top: 30px; padding: 20px; opacity: 0.8; font-size: 16px; border-top: 1px solid rgba(255,255,255,0.2); color: #fff;">
+            <div style="margin-bottom: 10px;">🎯 Carta Buscada: <strong>${targetName}</strong></div>
             <div>🔑 Carta Vista: <strong>${keyName}</strong></div>
         </div>
     `;
@@ -549,6 +560,127 @@ function changeStopMode() {
     }
 }
 
+// Edit Static Outs
+function showEditOuts() {
+    const container = document.getElementById('outsEditor');
+    if (!container) return;
+    
+    let html = '';
+    
+    // Posiciones 1-26 (boca arriba)
+    html += '<h3 style="margin-top: 0;">Posiciones 1-26 (Boca Arriba)</h3>';
+    for (let i = 1; i <= 26; i++) {
+        const currentValue = state.customStaticOuts[i] || defaultStaticOuts[i] || '';
+        html += `
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">
+                    Posición ${i}
+                </label>
+                <input 
+                    type="text" 
+                    id="out_${i}" 
+                    value="${currentValue.replace(/"/g, '&quot;')}"
+                    onchange="updateStaticOut(${i})"
+                    style="
+                        width: 100%;
+                        padding: 10px;
+                        border: 2px solid rgba(255,255,255,0.2);
+                        border-radius: 8px;
+                        background: rgba(255,255,255,0.1);
+                        color: white;
+                        font-size: 14px;
+                    "
+                />
+            </div>
+        `;
+    }
+    
+    // Posiciones especiales (boca abajo)
+    html += '<h3 style="margin-top: 30px;">Posiciones Especiales (Boca Abajo)</h3>';
+    const specialPositions = [43, 44];
+    for (const pos of specialPositions) {
+        const currentValue = state.customStaticOuts[pos] || defaultStaticOuts[pos] || '';
+        html += `
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">
+                    Posición ${pos} (${53 - pos} boca abajo)
+                </label>
+                <input 
+                    type="text" 
+                    id="out_${pos}" 
+                    value="${currentValue.replace(/"/g, '&quot;')}"
+                    onchange="updateStaticOut(${pos})"
+                    style="
+                        width: 100%;
+                        padding: 10px;
+                        border: 2px solid rgba(255,255,255,0.2);
+                        border-radius: 8px;
+                        background: rgba(255,255,255,0.1);
+                        color: white;
+                        font-size: 14px;
+                    "
+                />
+            </div>
+        `;
+    }
+    
+    container.innerHTML = html;
+}
+
+function updateStaticOut(position) {
+    const input = document.getElementById(`out_${position}`);
+    if (input) {
+        state.customStaticOuts[position] = input.value;
+        saveState();
+        showNotification(`Posición ${position} actualizada`);
+    }
+}
+
+function resetStaticOuts() {
+    if (confirm('¿Restaurar todas las Static Outs a sus valores por defecto?')) {
+        state.customStaticOuts = { ...defaultStaticOuts };
+        saveState();
+        showEditOuts();
+        showNotification('Static Outs restauradas');
+    }
+}
+
+// Dynamic Outs Configuration
+function toggleDynamicOut(outName) {
+    const checkbox = document.getElementById(`dyn${outName.charAt(0).toUpperCase() + outName.slice(1)}`);
+    if (checkbox && state.dynamicOutsConfig[outName]) {
+        state.dynamicOutsConfig[outName].enabled = checkbox.checked;
+        saveState();
+        showNotification(`${outName}: ${checkbox.checked ? 'activada' : 'desactivada'}`);
+    }
+}
+
+function updateDynamicConfig(outName, property, value) {
+    if (state.dynamicOutsConfig[outName]) {
+        state.dynamicOutsConfig[outName][property] = parseInt(value);
+        saveState();
+        showNotification(`Configuración actualizada`);
+    }
+}
+
+function loadDynamicOutsConfig() {
+    // Cargar checkboxes
+    const sumaMinutosCheck = document.getElementById('dynSumaMinutos');
+    const letrasNombreCheck = document.getElementById('dynLetrasNombre');
+    const sumaFechaCheck = document.getElementById('dynSumaFecha');
+    
+    if (sumaMinutosCheck) sumaMinutosCheck.checked = state.dynamicOutsConfig.sumaMinutos.enabled;
+    if (letrasNombreCheck) letrasNombreCheck.checked = state.dynamicOutsConfig.letrasNombre.enabled;
+    if (sumaFechaCheck) sumaFechaCheck.checked = state.dynamicOutsConfig.sumaFecha.enabled;
+    
+    // Cargar valores
+    const adelantarSi = document.getElementById('adelantarSi');
+    const adelantarMinutos = document.getElementById('adelantarMinutos');
+    
+    if (adelantarSi) adelantarSi.value = state.dynamicOutsConfig.sumaMinutos.adelantarSi;
+    if (adelantarMinutos) adelantarMinutos.value = state.dynamicOutsConfig.sumaMinutos.adelantarMinutos;
+}
+
 function updateHomeStackDisplay() {
     const stackNames = {
         'mnemonica': 'Mnemonica',
@@ -639,11 +771,197 @@ function updateStackDisplay() {
     `).join('');
 }
 
+// ============================================
+// SISTEMA DE OUTS
+// ============================================
+
+// Dynamic Outs Functions
+function checkSumaMinutos(position) {
+    if (!state.dynamicOutsConfig.sumaMinutos.enabled) return null;
+    
+    const now = new Date();
+    let minutes = now.getMinutes();
+    let seconds = now.getSeconds();
+    
+    const secondsUntilNext = 60 - seconds;
+    if (secondsUntilNext < state.dynamicOutsConfig.sumaMinutos.adelantarSi) {
+        minutes += state.dynamicOutsConfig.sumaMinutos.adelantarMinutos;
+        if (minutes >= 60) minutes -= 60;
+    }
+    
+    const digit1 = Math.floor(minutes / 10);
+    const digit2 = minutes % 10;
+    const suma = digit1 + digit2;
+    
+    if (position === suma) {
+        const willAdvance = secondsUntilNext < state.dynamicOutsConfig.sumaMinutos.adelantarSi;
+        return {
+            name: "Suma de Minutos",
+            text: willAdvance ? 
+                `En ${state.dynamicOutsConfig.sumaMinutos.adelantarMinutos} min, la hora sumará ${suma}` :
+                `La hora suma ${suma}`,
+            position: suma,
+            fromBottom: false
+        };
+    }
+    
+    const posFromBottom = 53 - position;
+    if (posFromBottom === suma) {
+        const willAdvance = secondsUntilNext < state.dynamicOutsConfig.sumaMinutos.adelantarSi;
+        return {
+            name: "Suma de Minutos",
+            text: willAdvance ?
+                `En ${state.dynamicOutsConfig.sumaMinutos.adelantarMinutos} min, la hora sumará ${suma}` :
+                `La hora suma ${suma}`,
+            position: suma,
+            fromBottom: true
+        };
+    }
+    
+    return null;
+}
+
+function checkLetrasNombre(position, currentStack) {
+    if (!state.dynamicOutsConfig.letrasNombre.enabled) return null;
+    
+    const stack = stacks[currentStack];
+    
+    for (const card of stack) {
+        const cardName = getCardName(card);
+        const variants = [cardName, cardName.replace(' de ', ' ')];
+        
+        for (const variant of variants) {
+            const letterCount = variant.replace(/\s/g, '').length;
+            if (letterCount === position) {
+                return {
+                    name: "Letras del Nombre",
+                    text: `Deletrea "${variant}"`,
+                    position: position,
+                    fromBottom: false
+                };
+            }
+        }
+    }
+    
+    const posFromBottom = 53 - position;
+    for (const card of stack) {
+        const cardName = getCardName(card);
+        const variants = [cardName, cardName.replace(' de ', ' ')];
+        
+        for (const variant of variants) {
+            const letterCount = variant.replace(/\s/g, '').length;
+            if (letterCount === posFromBottom) {
+                return {
+                    name: "Letras del Nombre",
+                    text: `Deletrea "${variant}"`,
+                    position: posFromBottom,
+                    fromBottom: true
+                };
+            }
+        }
+    }
+    
+    return null;
+}
+
+function checkSumaFecha(position) {
+    if (!state.dynamicOutsConfig.sumaFecha.enabled) return null;
+    
+    const now = new Date();
+    const day = now.getDate();
+    const month = now.getMonth() + 1;
+    const year = now.getFullYear();
+    
+    const allDigits = String(day) + String(month) + String(year);
+    const sumaTotal = allDigits.split('').reduce((acc, d) => acc + parseInt(d), 0);
+    
+    if (position === sumaTotal) {
+        return {
+            name: "Suma de Fecha",
+            text: `La fecha suma ${sumaTotal}`,
+            position: position,
+            fromBottom: false
+        };
+    }
+    
+    const posFromBottom = 53 - position;
+    if (posFromBottom === sumaTotal) {
+        return {
+            name: "Suma de Fecha",
+            text: `La fecha suma ${sumaTotal}`,
+            position: posFromBottom,
+            fromBottom: true
+        };
+    }
+    
+    return null;
+}
+
+function findBestOut(targetPosition, currentStack) {
+    const dynamicOuts = [
+        checkSumaMinutos(targetPosition),
+        checkLetrasNombre(targetPosition, currentStack),
+        checkSumaFecha(targetPosition)
+    ].filter(out => out !== null);
+    
+    if (dynamicOuts.length > 0) {
+        return dynamicOuts[0];
+    }
+    
+    const staticText = state.customStaticOuts[targetPosition] || defaultStaticOuts[targetPosition] || `Posición ${targetPosition}`;
+    const isFromBottom = targetPosition > 26;
+    
+    return {
+        name: `Posición ${targetPosition}`,
+        text: staticText,
+        position: targetPosition,
+        fromBottom: isFromBottom,
+        isStatic: true
+    };
+}
+
+// Static Outs por defecto (editables por usuario)
+const defaultStaticOuts = {
+    1: "Da vuelta la carta de arriba",
+    2: "Quema la carta de arriba y abajo. Da vuelta la de arriba",
+    3: "Quema DOS cartas de arriba y abajo. Da vuelta la de arriba",
+    4: "Deletrea ASES",
+    5: "Deletrea MAGIA",
+    6: "Deletrea MAGIA!",
+    7: "Piensa un número entre 1-10 O di que 7 es tu número de suerte",
+    8: "Deletrea MISTERIO",
+    9: "Han estado mezclando por 9 segundos",
+    10: "Deletrea CARTASUERTE",
+    11: "Deletrea ABRACADABRA",
+    12: "Deletrea ABRACADABRA!",
+    13: "Número de mala suerte 13",
+    14: "Número de mala suerte 13!",
+    15: "Deletrea COMOLOHAZHECHO",
+    16: "Deletrea ESTASERAMICARTA",
+    17: "Los cronometraste desde 17 segundos",
+    18: "Forzaje 20-30!",
+    19: "Forzaje 20-30",
+    20: "Deletrea CREOQUEESTAESMICARTA",
+    21: "Deletrea CREOQUEESTAESMICARTA!",
+    22: "Deletrea INCOMPRENSIBILIDADES!",
+    23: "El poder del número 23, conocido como 'el enigma 23'",
+    24: "El poder del número 23, conocido como 'el enigma 23'!",
+    25: "El temporizador marcó 25 segundos",
+    26: "El temporizador marcó 26 segundos",
+    43: "Forzaje 10-20",
+    44: "Forzaje 10-20!"
+};
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     console.log('MAXIM: DOM loaded');
     
     loadState();
+    
+    // Cargar Static Outs (usar defaults si no hay custom)
+    if (!state.customStaticOuts || Object.keys(state.customStaticOuts).length === 0) {
+        state.customStaticOuts = { ...defaultStaticOuts };
+    }
     
     const stackType = document.getElementById('stackType');
     if (stackType) {
