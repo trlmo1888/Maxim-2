@@ -334,6 +334,11 @@ class IOSTimer {
         this.audio.pause();
         this.audio.currentTime = 0;
         
+        // Restablecer a valores por defecto
+        this.hours = 0;
+        this.minutes = 0;
+        this.seconds = 15;
+        
         const pauseBtn = document.getElementById('pauseBtn');
         if (pauseBtn) {
             pauseBtn.style.display = 'block';
