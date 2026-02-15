@@ -805,20 +805,29 @@
                         <span>Suma de Minutos</span>
                     </label>
                     
-                    <div id="sumaMinutosConfig" style="margin-left: 25px; margin-bottom: 15px;">
-                        <label style="display: block; font-size: 12px; margin-top: 5px;">
-                            Adelantar si faltan menos de:
+                    <div id="sumaMinutosConfig" style="margin-left: 25px; margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                        <p style="font-size: 11px; opacity: 0.7; margin-bottom: 10px;">Elige UNA opción:</p>
+                        
+                        <label style="display: block; font-size: 12px; margin-bottom: 8px;">
+                            <strong>Opción A:</strong> Si faltan menos de
                             <input type="number" id="adelantarSi" value="12" min="0" max="59" 
                                 onchange="updateDynamicConfig('sumaMinutos', 'adelantarSi', this.value)"
-                                style="width: 60px; margin-left: 5px; padding: 5px; border-radius: 5px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
-                            segundos
+                                style="width: 50px; margin: 0 3px; padding: 4px; border-radius: 4px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                            segs → Adelanta <strong>1 minuto</strong>
+                            <span style="font-size: 10px; opacity: 0.6; display: block; margin-top: 3px;">
+                                (Poner 0 para desactivar)
+                            </span>
                         </label>
-                        <label style="display: block; font-size: 12px; margin-top: 5px;">
-                            Adelantar:
-                            <input type="number" id="adelantarMinutos" value="1" min="1" max="10"
+                        
+                        <label style="display: block; font-size: 12px; margin-top: 8px;">
+                            <strong>Opción B:</strong> Adelantar siempre
+                            <input type="number" id="adelantarMinutos" value="0" min="0" max="10"
                                 onchange="updateDynamicConfig('sumaMinutos', 'adelantarMinutos', this.value)"
-                                style="width: 60px; margin-left: 5px; padding: 5px; border-radius: 5px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                                style="width: 50px; margin: 0 3px; padding: 4px; border-radius: 4px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
                             minutos
+                            <span style="font-size: 10px; opacity: 0.6; display: block; margin-top: 3px;">
+                                (Poner 0 para desactivar)
+                            </span>
                         </label>
                     </div>
                     
@@ -930,8 +939,8 @@
         </div>
     </div>
 
-    <script src="timer.js?v=11"></script>
-    <script src="app.js?v=11"></script>
+    <script src="timer.js?v=12"></script>
+    <script src="app.js?v=12"></script>
 </body>
 </html>
 
