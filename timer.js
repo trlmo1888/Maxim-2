@@ -254,20 +254,47 @@ class IOSTimer {
     }
 
     stop() {
-        this.audio.pause();
-        this.audio.currentTime = 0;
-        clearInterval(this.interval);
-        this.isRunning = false;
+        // Obtener modo de detener del state
+        const stopMode = typeof state !== 'undefined' ? (state.stopMode || 1) : 1;
         
-        // Cerrar timer
-        document.getElementById('timerModal').classList.remove('active');
-        
-        // Ir DIRECTAMENTE a pantalla de key card
-        setTimeout(() => {
-            if (typeof showScreen === 'function') {
-                showScreen('keyCardSuitScreen');
+        if (stopMode === 1) {
+            // Modo 1: Detener directo
+            this.audio.pause();
+            this.audio.currentTime = 0;
+            clearInterval(this.interval);
+            this.isRunning = false;
+            
+            // Cerrar timer
+            document.getElementById('timerModal').classList.remove('active');
+            
+            // Ir DIRECTAMENTE a pantalla de key card
+            setTimeout(() => {
+                if (typeof showScreen === 'function') {
+                    showScreen('keyCardSuitScreen');
+                }
+            }, 100);
+        } else {
+            // Modo 2: Primera vez para sonido, segunda continúa
+            if (this.audio.paused) {
+                // Ya está parado el sonido, ahora sí continuamos
+                clearInterval(this.interval);
+                this.isRunning = false;
+                
+                // Cerrar timer
+                document.getElementById('timerModal').classList.remove('active');
+                
+                // Ir a siguiente pantalla
+                setTimeout(() => {
+                    if (typeof showScreen === 'function') {
+                        showScreen('keyCardSuitScreen');
+                    }
+                }, 100);
+            } else {
+                // Primera vez: solo parar sonido
+                this.audio.pause();
+                this.audio.currentTime = 0;
             }
-        }, 100);
+        }
         
         if ('vibrate' in navigator) {
             navigator.vibrate(50);
