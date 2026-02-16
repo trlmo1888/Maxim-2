@@ -603,27 +603,29 @@
         <div id="notification" class="notification"></div>
 
         <!-- Main Screen -->
-        <div id="mainScreen" class="screen active">
-            <div class="logo-section">
+        <div id="mainScreen" class="screen active" style="display: flex; flex-direction: column; height: 100vh; padding: 20px;">
+            <div class="logo-section" style="flex-shrink: 0; margin-bottom: 20px;">
                 <div class="logo-circle">
                     <span class="letter">M</span>
                 </div>
                 <div class="app-name">MAXIM ACAAN</div>
             </div>
 
-            <button class="perform-button" onclick="showTimerFirst()">
-                <div class="play-icon"></div>
-                <span>Ejecutar</span>
-            </button>
-
-            <div class="menu-grid" style="grid-template-columns: 1fr; margin-top: 20px;">
-                <button class="menu-item" onclick="showScreen('settingsScreen')">
-                    <div class="menu-icon">⚙️</div>
-                    <div class="menu-label">Ajustes</div>
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0;">
+                <button class="perform-button" onclick="showTimerFirst()" style="margin-bottom: 20px;">
+                    <div class="play-icon"></div>
+                    <span>Ejecutar</span>
                 </button>
+
+                <div class="menu-grid" style="grid-template-columns: 1fr;">
+                    <button class="menu-item" onclick="showScreen('settingsScreen')">
+                        <div class="menu-icon">⚙️</div>
+                        <div class="menu-label">Ajustes</div>
+                    </button>
+                </div>
             </div>
 
-            <div style="text-align: center; margin-top: auto; padding: 20px 0; opacity: 0.7; font-size: 14px;">
+            <div style="flex-shrink: 0; text-align: center; opacity: 0.7; font-size: 14px; padding-top: 20px;">
                 <div id="currentStackDisplay" style="margin-bottom: 8px;">
                     Stack: <span id="stackNameHome">Mnemonica</span>
                 </div>
@@ -740,7 +742,7 @@
         </div>
 
         <!-- Settings Screen -->
-        <div id="settingsScreen" class="settings-screen">
+        <div id="settingsScreen" class="screen">
             <div class="header">
                 <button class="back-button" onclick="showMainScreen()">←</button>
                 <div class="header-title">Ajustes</div>
@@ -754,8 +756,8 @@
                         <option value="aronson">Aronson Stack</option>
                         <option value="eight-kings">Eight Kings</option>
                         <option value="si-stebbins">Si Stebbins</option>
-                        <option value="custom">Stack Personalizado</option>
                     </select>
+                    
                     <button onclick="showScreen('stackScreen')" style="
                         margin-top: 15px;
                         width: 100%;
@@ -920,7 +922,7 @@
             </div>
             
             <div style="padding: 20px; height: calc(100vh - 80px); overflow-y: auto;">
-                <h3 id="currentStackName" style="margin-bottom: 15px; color: #e84a5f;">Mnemonica (Tamariz)</h3>
+                <h3 id="currentStackName" style="margin-bottom: 15px; color: #ffffff;">Mnemonica (Tamariz)</h3>
                 <div id="stackCardsList" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
                     <!-- Las cartas se generarán aquí -->
                 </div>
@@ -939,8 +941,8 @@
         </div>
     </div>
 
-    <script src="timer.js?v=12"></script>
-    <script src="app.js?v=12"></script>
+    <script src="timer.js?v=14"></script>
+    <script src="app.js?v=14"></script>
 </body>
 </html>
 
