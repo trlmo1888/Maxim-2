@@ -686,8 +686,7 @@ function updateHomeStackDisplay() {
         'mnemonica': 'Mnemonica',
         'aronson': 'Aronson',
         'eight-kings': 'Eight Kings',
-        'si-stebbins': 'Si Stebbins',
-        'custom': 'Personalizado'
+        'si-stebbins': 'Si Stebbins'
     };
     
     const el = document.getElementById('stackNameHome');
@@ -748,13 +747,14 @@ function updateStackDisplay() {
         'mnemonica': 'Mnemonica (Tamariz)',
         'aronson': 'Aronson Stack',
         'eight-kings': 'Eight Kings',
-        'si-stebbins': 'Si Stebbins',
-        'custom': 'Stack Personalizado'
+        'si-stebbins': 'Si Stebbins'
     };
     
     if (stackName) {
         stackName.textContent = stackNames[state.currentStack] || 'Stack Desconocido';
     }
+    
+    if (!currentStack) return;
     
     stackList.innerHTML = currentStack.map((card, index) => `
         <div style="
@@ -786,6 +786,7 @@ function checkSumaMinutos(position) {
     let willAdvance = false;
     let advanceText = '';
     
+    // PRIORIDAD: Opción A > Opción B
     // Opción A: Si faltan menos de X segundos → adelantar 1 minuto (automático)
     const secondsUntilNext = 60 - seconds;
     if (state.dynamicOutsConfig.sumaMinutos.adelantarSi > 0 && secondsUntilNext < state.dynamicOutsConfig.sumaMinutos.adelantarSi) {
@@ -794,7 +795,7 @@ function checkSumaMinutos(position) {
         willAdvance = true;
         advanceText = 'En 1 min';
     }
-    // Opción B: Adelantar X minutos (manual, siempre que X > 0)
+    // Opción B: Adelantar X minutos (manual, siempre que X > 0) - SOLO si A no se activó
     else if (state.dynamicOutsConfig.sumaMinutos.adelantarMinutos > 0) {
         minutes += state.dynamicOutsConfig.sumaMinutos.adelantarMinutos;
         if (minutes >= 60) minutes -= 60;
@@ -923,7 +924,7 @@ function findBestOut(targetPosition, currentStack) {
     const isFromBottom = targetPosition > 26;
     
     return {
-        name: `Posición ${targetPosition}`,
+        name: "Static Out",
         text: staticText,
         position: targetPosition,
         fromBottom: isFromBottom,
