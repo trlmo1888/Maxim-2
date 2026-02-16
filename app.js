@@ -72,7 +72,7 @@ function generateSiStebbins() {
 
 // Navigation Functions
 function showScreen(screenId) {
-    const allScreens = document.querySelectorAll('.screen, .perform-screen, .results-screen, .settings-screen');
+    const allScreens = document.querySelectorAll('.screen, .perform-screen, .results-screen');
     allScreens.forEach(s => s.classList.remove('active'));
     
     const screen = document.getElementById(screenId);
@@ -991,7 +991,9 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('MAXIM: Initialized');
 });
 
-// Service Worker
+// Service Worker - DESACTIVADO TEMPORALMENTE
+// Descomenta cuando esté en producción y funcionando correctamente
+/*
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
@@ -999,5 +1001,6 @@ if ('serviceWorker' in navigator) {
             .catch(err => console.log('SW registration failed'));
     });
 }
+*/
 
 console.log('MAXIM: app.js loaded');
