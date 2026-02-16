@@ -72,22 +72,39 @@ function generateSiStebbins() {
 
 // Navigation Functions
 function showScreen(screenId) {
-    const allScreens = document.querySelectorAll('.screen, .perform-screen, .results-screen');
-    allScreens.forEach(s => s.classList.remove('active'));
-    
-    const screen = document.getElementById(screenId);
-    if (screen) {
-        screen.classList.add('active');
+    try {
+        console.log('showScreen called with:', screenId);
+        
+        const allScreens = document.querySelectorAll('.screen, .perform-screen, .results-screen');
+        console.log('Found screens:', allScreens.length);
+        
+        allScreens.forEach(s => s.classList.remove('active'));
+        
+        const screen = document.getElementById(screenId);
+        console.log('Target screen found:', screen ? 'YES' : 'NO');
+        
+        if (screen) {
+            screen.classList.add('active');
+            console.log('Added active class to:', screenId);
+        } else {
+            console.error('Screen not found:', screenId);
+            return;
+        }
+        
+        // Cargar contenido especial según pantalla
+        if (screenId === 'editOutsScreen') {
+            showEditOuts();
+        } else if (screenId === 'settingsScreen') {
+            console.log('Loading dynamic outs config...');
+            loadDynamicOutsConfig();
+        }
+        
+        vibrate(30);
+        console.log('showScreen completed successfully');
+    } catch (error) {
+        console.error('Error in showScreen:', error);
+        alert('Error al cambiar de pantalla: ' + error.message);
     }
-    
-    // Cargar contenido especial según pantalla
-    if (screenId === 'editOutsScreen') {
-        showEditOuts();
-    } else if (screenId === 'settingsScreen') {
-        loadDynamicOutsConfig();
-    }
-    
-    vibrate(30);
 }
 
 function showMainScreen() {
@@ -664,21 +681,28 @@ function updateDynamicConfig(outName, property, value) {
 }
 
 function loadDynamicOutsConfig() {
-    // Cargar checkboxes
-    const sumaMinutosCheck = document.getElementById('dynSumaMinutos');
-    const letrasNombreCheck = document.getElementById('dynLetrasNombre');
-    const sumaFechaCheck = document.getElementById('dynSumaFecha');
-    
-    if (sumaMinutosCheck) sumaMinutosCheck.checked = state.dynamicOutsConfig.sumaMinutos.enabled;
-    if (letrasNombreCheck) letrasNombreCheck.checked = state.dynamicOutsConfig.letrasNombre.enabled;
-    if (sumaFechaCheck) sumaFechaCheck.checked = state.dynamicOutsConfig.sumaFecha.enabled;
-    
-    // Cargar valores
-    const adelantarSi = document.getElementById('adelantarSi');
-    const adelantarMinutos = document.getElementById('adelantarMinutos');
-    
-    if (adelantarSi) adelantarSi.value = state.dynamicOutsConfig.sumaMinutos.adelantarSi;
-    if (adelantarMinutos) adelantarMinutos.value = state.dynamicOutsConfig.sumaMinutos.adelantarMinutos;
+    try {
+        console.log('loadDynamicOutsConfig called');
+        // Cargar checkboxes
+        const sumaMinutosCheck = document.getElementById('dynSumaMinutos');
+        const letrasNombreCheck = document.getElementById('dynLetrasNombre');
+        const sumaFechaCheck = document.getElementById('dynSumaFecha');
+        
+        if (sumaMinutosCheck) sumaMinutosCheck.checked = state.dynamicOutsConfig.sumaMinutos.enabled;
+        if (letrasNombreCheck) letrasNombreCheck.checked = state.dynamicOutsConfig.letrasNombre.enabled;
+        if (sumaFechaCheck) sumaFechaCheck.checked = state.dynamicOutsConfig.sumaFecha.enabled;
+        
+        // Cargar valores
+        const adelantarSi = document.getElementById('adelantarSi');
+        const adelantarMinutos = document.getElementById('adelantarMinutos');
+        
+        if (adelantarSi) adelantarSi.value = state.dynamicOutsConfig.sumaMinutos.adelantarSi;
+        if (adelantarMinutos) adelantarMinutos.value = state.dynamicOutsConfig.sumaMinutos.adelantarMinutos;
+        
+        console.log('loadDynamicOutsConfig completed');
+    } catch (error) {
+        console.error('Error in loadDynamicOutsConfig:', error);
+    }
 }
 
 function updateHomeStackDisplay() {
