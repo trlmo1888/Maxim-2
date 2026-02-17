@@ -1,5 +1,10 @@
 // MAXIM - Card Revelation App
 // v18 - 2026-02-16 12:00
+
+console.log('========================================');
+console.log('MAXIM APP.JS LOADING...');
+console.log('========================================');
+
 // App State
 const state = {
     selectedSuit: null,
@@ -1029,3 +1034,7 @@ if ('serviceWorker' in navigator) {
 */
 
 console.log('MAXIM: app.js loaded');
+console.log('========================================');
+console.log('State initialized:', state);
+console.log('showScreen function available:', typeof showScreen);
+console.log('========================================');
