@@ -1,10 +1,17 @@
 // iOS-Style Timer for MAXIM - v18
 // Timestamp: 2026-02-16 12:00
+
+console.log('========================================');
+console.log('MAXIM TIMER.JS LOADING...');
+console.log('========================================');
+
 class IOSTimer {
     constructor() {
+        console.log('IOSTimer constructor called');
         this.hours = 0;
         this.minutes = 0;
         this.seconds = 15; // Default 15 segundos
+        console.log('Timer initialized with seconds:', this.seconds);
         this.totalSeconds = 0;
         this.remainingSeconds = 0;
         this.interval = null;
