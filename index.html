@@ -617,21 +617,39 @@
                     <span>Ejecutar</span>
                 </button>
 
-                <div class="menu-grid" style="grid-template-columns: 1fr;">
-                    <button class="menu-item" onclick="showScreen('settingsScreen')">
-                        <div class="menu-icon">⚙️</div>
-                        <div class="menu-label">Ajustes</div>
-                    </button>
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 16px; margin-bottom: 20px;">
+                    <h3 style="font-size: 16px; margin-bottom: 12px; opacity: 0.9;">Stack</h3>
+                    <select id="stackType" onchange="changeStack()" style="
+                        width: 100%;
+                        padding: 14px;
+                        background: rgba(255,255,255,0.1);
+                        color: white;
+                        border: 2px solid rgba(255,255,255,0.2);
+                        border-radius: 12px;
+                        font-size: 16px;
+                        cursor: pointer;
+                    ">
+                        <option value="mnemonica">Mnemonica (Tamariz)</option>
+                        <option value="aronson">Aronson Stack</option>
+                        <option value="eight-kings">Eight Kings</option>
+                        <option value="si-stebbins">Si Stebbins</option>
+                    </select>
+                    <button onclick="showScreen('stackScreen')" style="
+                        width: 100%;
+                        margin-top: 12px;
+                        padding: 12px;
+                        background: rgba(255,255,255,0.05);
+                        border: 1px solid rgba(255,255,255,0.2);
+                        border-radius: 10px;
+                        color: white;
+                        font-size: 14px;
+                        cursor: pointer;
+                    ">Ver Stack Completo</button>
                 </div>
             </div>
 
-            <div style="flex-shrink: 0; text-align: center; opacity: 0.7; font-size: 14px; padding-top: 20px;">
-                <div id="currentStackDisplay" style="margin-bottom: 8px;">
-                    Stack: <span id="stackNameHome">Mnemonica</span>
-                </div>
-                <div style="opacity: 0.5; font-size: 12px;">
-                    Créditos: T.P.
-                </div>
+            <div style="flex-shrink: 0; text-align: center; opacity: 0.5; font-size: 12px; padding-top: 10px;">
+                Créditos: T.P.
             </div>
         </div>
 
