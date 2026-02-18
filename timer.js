@@ -182,6 +182,9 @@ class IOSTimer {
         document.getElementById('timerRunning').classList.remove('active');
         document.getElementById('timerStopped').style.display = 'none';
         
+        // Auto-seleccionar 15 segundos
+        this.setQuickTime(0, 0, 15);
+        
         // Scroll a valores por defecto (0h, 0min, 15s)
         setTimeout(() => {
             this.scrollToValue('hoursPicker', this.hours);
