@@ -103,6 +103,9 @@ function showScreen(screenId) {
         } else if (screenId === 'settingsScreen') {
             console.log('Loading dynamic outs config...');
             loadDynamicOutsConfig();
+        } else if (screenId === 'stackScreen') {
+            console.log('Loading stack display...');
+            updateStackDisplay();
         }
         
         vibrate(30);
