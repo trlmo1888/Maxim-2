@@ -177,22 +177,24 @@ class IOSTimer {
     }
 
     open() {
-        document.getElementById('timerModal').classList.add('active');
-        document.getElementById('timerSetup').style.display = 'flex';
-        document.getElementById('timerRunning').classList.remove('active');
-        document.getElementById('timerStopped').style.display = 'none';
-        
-        // Asegurar valores por defecto
+        // Forzar valores antes de mostrar
         this.hours = 0;
         this.minutes = 0;
         this.seconds = 15;
         
-        // Scroll a valores (0h, 0min, 15s)
+        document.getElementById('timerModal').classList.add('active');
+        document.getElementById('timerSetup').style.display = 'flex';
+        document.getElementById('timerRunning').classList.remove('active');
+        
+        const timerStopped = document.getElementById('timerStopped');
+        if (timerStopped) timerStopped.style.display = 'none';
+        
+        // Posicionar pickers en 15 segundos
         setTimeout(() => {
-            this.scrollToValue('hoursPicker', 0);
-            this.scrollToValue('minutesPicker', 0);
             this.scrollToValue('secondsPicker', 15);
-        }, 50);
+            this.scrollToValue('minutesPicker', 0);
+            this.scrollToValue('hoursPicker', 0);
+        }, 100);
     }
 
     close() {
