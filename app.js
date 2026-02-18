@@ -770,12 +770,21 @@ function loadState() {
 }
 
 function updateStackDisplay() {
+    console.log('updateStackDisplay called');
     const stackList = document.getElementById('stackCardsList');
     const stackName = document.getElementById('currentStackName');
     
-    if (!stackList) return;
+    console.log('stackList found:', !!stackList);
+    console.log('current stack:', state.currentStack);
+    
+    if (!stackList) {
+        console.error('stackCardsList element not found!');
+        return;
+    }
     
     const currentStack = stacks[state.currentStack];
+    console.log('currentStack data:', currentStack ? currentStack.length + ' cards' : 'NULL');
+    
     const stackNames = {
         'mnemonica': 'Mnemonica (Tamariz)',
         'aronson': 'Aronson Stack',
@@ -787,7 +796,10 @@ function updateStackDisplay() {
         stackName.textContent = stackNames[state.currentStack] || 'Stack Desconocido';
     }
     
-    if (!currentStack) return;
+    if (!currentStack) {
+        console.error('Current stack is null!');
+        return;
+    }
     
     stackList.innerHTML = currentStack.map((card, index) => `
         <div style="
@@ -802,6 +814,8 @@ function updateStackDisplay() {
             <div style="font-size: 18px;">${card}</div>
         </div>
     `).join('');
+    
+    console.log('Stack display updated successfully');
 }
 
 // ============================================
