@@ -347,45 +347,53 @@
         .reveal-methods {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-        }
-
-        .reveal-card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
+            gap: 20px;
             padding: 20px;
         }
 
+        .reveal-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
         .reveal-card h3 {
-            font-size: 16px;
+            font-size: 18px;
             color: #ffffff;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .reveal-card p {
-            font-size: 14px;
-            line-height: 1.6;
-            opacity: 0.9;
+            font-size: 16px;
+            line-height: 1.8;
+            opacity: 0.95;
             color: #ffffff;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .reveal-number {
-            font-size: 28px;
-            font-weight: 900;
+            font-size: 56px;
+            font-weight: 300;
             color: #ffffff;
-            margin: 12px 0;
+            margin: 24px 0;
+            letter-spacing: -2px;
+            text-shadow: 0 4px 16px rgba(255,255,255,0.2);
         }
 
         .reveal-instruction {
-            font-size: 15px;
+            font-size: 20px;
             font-weight: 600;
             color: #ffffff;
-            line-height: 1.5;
+            line-height: 1.6;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .timer-launch-btn {
@@ -603,31 +611,34 @@
         <div id="notification" class="notification"></div>
 
         <!-- Main Screen -->
-        <div id="mainScreen" class="screen active" style="display: flex; flex-direction: column; height: 100vh; padding: 20px;">
-            <div class="logo-section" style="flex-shrink: 0; margin-bottom: 20px;">
+        <div id="mainScreen" class="screen active" style="display: flex; flex-direction: column; min-height: 100vh; padding: 30px 20px;">
+            <div class="logo-section" style="flex-shrink: 0; padding: 20px 0;">
                 <div class="logo-circle">
                     <span class="letter">M</span>
                 </div>
                 <div class="app-name">MAXIM ACAAN</div>
             </div>
 
-            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0;">
-                <button class="perform-button" onclick="showTimerFirst()" style="margin-bottom: 20px;">
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px;">
+                <button class="perform-button" onclick="showTimerFirst()">
                     <div class="play-icon"></div>
                     <span>Ejecutar</span>
                 </button>
 
-                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 16px; margin-bottom: 20px;">
-                    <h3 style="font-size: 16px; margin-bottom: 12px; opacity: 0.9;">Stack</h3>
+                <div style="background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.08) 100%); padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                    <h3 style="font-size: 15px; margin-bottom: 16px; opacity: 0.85; font-weight: 600;">Stack Actual</h3>
                     <select id="stackType" onchange="changeStack()" style="
                         width: 100%;
-                        padding: 14px;
-                        background: rgba(255,255,255,0.1);
+                        padding: 16px;
+                        background: rgba(0,0,0,0.2);
                         color: white;
-                        border: 2px solid rgba(255,255,255,0.2);
-                        border-radius: 12px;
+                        border: 2px solid rgba(255,255,255,0.25);
+                        border-radius: 14px;
                         font-size: 16px;
+                        font-weight: 500;
                         cursor: pointer;
+                        margin-bottom: 12px;
+                        transition: all 0.2s;
                     ">
                         <option value="mnemonica">Mnemonica (Tamariz)</option>
                         <option value="aronson">Aronson Stack</option>
@@ -636,20 +647,21 @@
                     </select>
                     <button onclick="showScreen('stackScreen')" style="
                         width: 100%;
-                        margin-top: 12px;
-                        padding: 12px;
-                        background: rgba(255,255,255,0.05);
+                        padding: 14px;
+                        background: rgba(255,255,255,0.08);
                         border: 1px solid rgba(255,255,255,0.2);
-                        border-radius: 10px;
+                        border-radius: 12px;
                         color: white;
                         font-size: 14px;
+                        font-weight: 500;
                         cursor: pointer;
-                    ">Ver Stack Completo</button>
+                        transition: all 0.2s;
+                    ">📋 Ver Stack Completo</button>
                 </div>
             </div>
 
-            <div style="flex-shrink: 0; text-align: center; opacity: 0.5; font-size: 12px; padding-top: 10px;">
-                Créditos: T.P.
+            <div style="flex-shrink: 0; text-align: center; opacity: 0.4; font-size: 11px; padding: 20px 0 10px;">
+                MAXIM v18 · Créditos: T.P.
             </div>
         </div>
 
