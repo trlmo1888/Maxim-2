@@ -182,15 +182,17 @@ class IOSTimer {
         document.getElementById('timerRunning').classList.remove('active');
         document.getElementById('timerStopped').style.display = 'none';
         
-        // Auto-seleccionar 15 segundos
-        this.setQuickTime(0, 0, 15);
+        // Asegurar valores por defecto
+        this.hours = 0;
+        this.minutes = 0;
+        this.seconds = 15;
         
-        // Scroll a valores por defecto (0h, 0min, 15s)
+        // Scroll a valores (0h, 0min, 15s)
         setTimeout(() => {
-            this.scrollToValue('hoursPicker', this.hours);
-            this.scrollToValue('minutesPicker', this.minutes);
-            this.scrollToValue('secondsPicker', this.seconds);
-        }, 100);
+            this.scrollToValue('hoursPicker', 0);
+            this.scrollToValue('minutesPicker', 0);
+            this.scrollToValue('secondsPicker', 15);
+        }, 50);
     }
 
     close() {
