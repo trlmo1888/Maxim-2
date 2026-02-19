@@ -612,7 +612,7 @@
 
         <!-- Main Screen -->
         <div id="mainScreen" class="screen active" style="display: flex; flex-direction: column; min-height: 100vh; padding: 30px 20px;">
-            <div class="logo-section" style="flex-shrink: 0; padding: 20px 0;">
+            <div class="logo-section" style="flex-shrink: 0; padding: 10px 0 15px;">
                 <div class="logo-circle">
                     <span class="letter">M</span>
                 </div>
@@ -645,18 +645,30 @@
                         <option value="eight-kings">Eight Kings</option>
                         <option value="si-stebbins">Si Stebbins</option>
                     </select>
-                    <button onclick="showScreen('stackScreen')" style="
-                        width: 100%;
-                        padding: 14px;
-                        background: rgba(255,255,255,0.08);
-                        border: 1px solid rgba(255,255,255,0.2);
-                        border-radius: 12px;
-                        color: white;
-                        font-size: 14px;
-                        font-weight: 500;
-                        cursor: pointer;
-                        transition: all 0.2s;
-                    ">📋 Ver Stack Completo</button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <button onclick="showScreen('stackScreen')" style="
+                            padding: 14px;
+                            background: rgba(255,255,255,0.08);
+                            border: 1px solid rgba(255,255,255,0.2);
+                            border-radius: 12px;
+                            color: white;
+                            font-size: 13px;
+                            font-weight: 500;
+                            cursor: pointer;
+                            transition: all 0.2s;
+                        ">📋 Ver Stack</button>
+                        <button onclick="showScreen('createStackScreen')" style="
+                            padding: 14px;
+                            background: linear-gradient(135deg, rgba(103, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+                            border: 1px solid rgba(118, 75, 162, 0.5);
+                            border-radius: 12px;
+                            color: white;
+                            font-size: 13px;
+                            font-weight: 500;
+                            cursor: pointer;
+                            transition: all 0.2s;
+                        ">✨ Crear Stack</button>
+                    </div>
                 </div>
             </div>
 
@@ -958,6 +970,134 @@
                 </div>
             </div>
         </div>
+
+        <!-- Create Custom Stack Screen -->
+        <div id="createStackScreen" class="screen">
+            <div class="header">
+                <button class="back-button" onclick="showMainScreen()">←</button>
+                <div class="header-title">Crear Stack Personalizado</div>
+            </div>
+            
+            <div style="padding: 20px; height: calc(100vh - 80px); overflow-y: auto;">
+                <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 16px; margin-bottom: 16px;">
+                    <h3 style="margin-bottom: 12px; font-size: 15px;">Nombre del Stack</h3>
+                    <input type="text" id="customStackName" placeholder="Ej: Mi Stack Personalizado" style="
+                        width: 100%;
+                        padding: 14px;
+                        background: rgba(0,0,0,0.2);
+                        border: 2px solid rgba(255,255,255,0.2);
+                        border-radius: 12px;
+                        color: white;
+                        font-size: 16px;
+                    ">
+                </div>
+
+                <!-- Display de cartas -->
+                <div style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: 16px; margin-bottom: 16px; min-height: 100px; max-height: 150px; overflow-y: auto;">
+                    <div id="stackBuilderDisplay" style="font-size: 16px; line-height: 1.8; font-family: monospace;">
+                        <span style="opacity: 0.5;">Cartas aparecerán aquí...</span>
+                    </div>
+                    <div id="builderCardCount" style="margin-top: 12px; font-size: 14px; font-weight: 600; color: #a8e063;">0 / 52 cartas</div>
+                </div>
+
+                <!-- Vista previa carta actual -->
+                <div style="text-align: center; margin-bottom: 16px;">
+                    <div id="currentCardPreview" style="font-size: 48px; min-height: 60px; display: flex; align-items: center; justify-content: center;">
+                        <span style="opacity: 0.3;">?</span>
+                    </div>
+                </div>
+
+                <!-- Teclado: Rangos -->
+                <div style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 16px; margin-bottom: 12px;">
+                    <h4 style="font-size: 13px; opacity: 0.7; margin-bottom: 12px; text-align: center;">RANGO</h4>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
+                        <button onclick="selectRank('A')" class="card-key-btn">A</button>
+                        <button onclick="selectRank('2')" class="card-key-btn">2</button>
+                        <button onclick="selectRank('3')" class="card-key-btn">3</button>
+                        <button onclick="selectRank('4')" class="card-key-btn">4</button>
+                        <button onclick="selectRank('5')" class="card-key-btn">5</button>
+                        <button onclick="selectRank('6')" class="card-key-btn">6</button>
+                        <button onclick="selectRank('7')" class="card-key-btn">7</button>
+                        <button onclick="selectRank('8')" class="card-key-btn">8</button>
+                        <button onclick="selectRank('9')" class="card-key-btn">9</button>
+                        <button onclick="selectRank('10')" class="card-key-btn" style="grid-column: span 2;">10</button>
+                        <button onclick="selectRank('J')" class="card-key-btn">J</button>
+                        <button onclick="selectRank('Q')" class="card-key-btn">Q</button>
+                        <button onclick="selectRank('K')" class="card-key-btn">K</button>
+                    </div>
+                </div>
+
+                <!-- Teclado: Palos -->
+                <div style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 16px; margin-bottom: 16px;">
+                    <h4 style="font-size: 13px; opacity: 0.7; margin-bottom: 12px; text-align: center;">PALO</h4>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                        <button onclick="selectSuit('♠')" class="card-key-btn" style="font-size: 28px;">♠</button>
+                        <button onclick="selectSuit('♥')" class="card-key-btn" style="font-size: 28px; color: #ff6b6b;">♥</button>
+                        <button onclick="selectSuit('♦')" class="card-key-btn" style="font-size: 28px; color: #ff6b6b;">♦</button>
+                        <button onclick="selectSuit('♣')" class="card-key-btn" style="font-size: 28px;">♣</button>
+                    </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                    <button onclick="deleteLastCard()" style="
+                        padding: 14px;
+                        background: rgba(232, 74, 95, 0.2);
+                        border: 1px solid rgba(232, 74, 95, 0.5);
+                        border-radius: 12px;
+                        color: white;
+                        font-size: 15px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">⌫ Borrar</button>
+                    <button onclick="clearAllCards()" style="
+                        padding: 14px;
+                        background: rgba(255,255,255,0.08);
+                        border: 1px solid rgba(255,255,255,0.2);
+                        border-radius: 12px;
+                        color: white;
+                        font-size: 15px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">🗑️ Limpiar</button>
+                </div>
+
+                <button onclick="saveCustomStack()" style="
+                    width: 100%;
+                    padding: 18px;
+                    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+                    border: none;
+                    border-radius: 14px;
+                    color: white;
+                    font-size: 18px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    box-shadow: 0 4px 16px rgba(86, 171, 47, 0.4);
+                ">✅ Guardar Stack (52 cartas)</button>
+            </div>
+        </div>
+
+        <style>
+            .card-key-btn {
+                padding: 16px 8px;
+                background: rgba(255,255,255,0.15);
+                border: 2px solid rgba(255,255,255,0.25);
+                border-radius: 10px;
+                color: white;
+                font-size: 20px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.15s;
+            }
+            .card-key-btn:active {
+                transform: scale(0.95);
+                background: rgba(255,255,255,0.25);
+            }
+            .card-key-btn.selected {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-color: #764ba2;
+            }
+        </style>
 
         <div id="infoScreen" class="screen">
             <div class="header">
