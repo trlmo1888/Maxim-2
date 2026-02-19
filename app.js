@@ -12,6 +12,7 @@ const state = {
     targetCard: null, // Carta que el espectador nombró
     keyCard: null, // Carta de abajo que vemos
     currentStack: 'mnemonica',
+    customStacks: {}, // Stacks personalizados creados por el usuario
     stopMode: 1, // 1 = detener directo, 2 = detener sonido primero
     customStaticOuts: {}, // Se cargará con defaults
     dynamicOutsConfig: {
@@ -1022,10 +1023,14 @@ document.addEventListener('DOMContentLoaded', function() {
         state.customStaticOuts = { ...defaultStaticOuts };
     }
     
-    const stackType = document.getElementById('stackType');
-    if (stackType) {
-        stackType.value = state.currentStack;
+    // Cargar custom stacks
+    if (state.customStacks) {
+        Object.keys(state.customStacks).forEach(stackId => {
+            stacks[stackId] = state.customStacks[stackId].cards;
+        });
     }
+    
+    updateStackSelector();
     
     const stopMode = document.getElementById('stopMode');
     if (stopMode) {
@@ -1049,6 +1054,180 @@ if ('serviceWorker' in navigator) {
     });
 }
 */
+
+// ============================================
+// CUSTOM STACKS CREATOR - CARD CALCULATOR
+// ============================================
+
+let stackBuilder = {
+    cards: [],
+    currentRank: null,
+    currentSuit: null
+};
+
+function selectRank(rank) {
+    stackBuilder.currentRank = rank;
+    updateCardPreview();
+    
+    // Highlight botón seleccionado
+    document.querySelectorAll('.card-key-btn').forEach(btn => {
+        if (btn.textContent === rank) {
+            btn.classList.add('selected');
+        } else if (['A','2','3','4','5','6','7','8','9','10','J','Q','K'].includes(btn.textContent)) {
+            btn.classList.remove('selected');
+        }
+    });
+}
+
+function selectSuit(suit) {
+    if (!stackBuilder.currentRank) {
+        showNotification('⚠️ Primero selecciona un rango (A, 2, 3... K)');
+        return;
+    }
+    
+    stackBuilder.currentSuit = suit;
+    
+    // Añadir carta a la lista
+    const card = stackBuilder.currentRank + suit;
+    stackBuilder.cards.push(card);
+    
+    // Reset selección
+    stackBuilder.currentRank = null;
+    stackBuilder.currentSuit = null;
+    
+    updateStackBuilderDisplay();
+    updateCardPreview();
+    
+    // Quitar highlights
+    document.querySelectorAll('.card-key-btn').forEach(btn => btn.classList.remove('selected'));
+    
+    // Vibración
+    if ('vibrate' in navigator) navigator.vibrate(30);
+}
+
+function updateCardPreview() {
+    const preview = document.getElementById('currentCardPreview');
+    if (stackBuilder.currentRank) {
+        preview.innerHTML = `<span style="opacity: 1;">${stackBuilder.currentRank}<span style="opacity: 0.3;">?</span></span>`;
+    } else {
+        preview.innerHTML = '<span style="opacity: 0.3;">?</span>';
+    }
+}
+
+function updateStackBuilderDisplay() {
+    const display = document.getElementById('stackBuilderDisplay');
+    const counter = document.getElementById('builderCardCount');
+    
+    if (stackBuilder.cards.length === 0) {
+        display.innerHTML = '<span style="opacity: 0.5;">Cartas aparecerán aquí...</span>';
+    } else {
+        display.textContent = stackBuilder.cards.join(', ');
+    }
+    
+    const count = stackBuilder.cards.length;
+    counter.textContent = `${count} / 52 cartas`;
+    counter.style.color = count === 52 ? '#a8e063' : count > 52 ? '#e84a5f' : 'white';
+}
+
+function deleteLastCard() {
+    if (stackBuilder.cards.length > 0) {
+        stackBuilder.cards.pop();
+        updateStackBuilderDisplay();
+        if ('vibrate' in navigator) navigator.vibrate(50);
+    }
+}
+
+function clearAllCards() {
+    if (stackBuilder.cards.length === 0) return;
+    
+    if (confirm('¿Borrar todas las cartas?')) {
+        stackBuilder.cards = [];
+        stackBuilder.currentRank = null;
+        stackBuilder.currentSuit = null;
+        updateStackBuilderDisplay();
+        updateCardPreview();
+        document.querySelectorAll('.card-key-btn').forEach(btn => btn.classList.remove('selected'));
+    }
+}
+
+function saveCustomStack() {
+    const nameInput = document.getElementById('customStackName');
+    const name = nameInput.value.trim();
+    
+    if (!name) {
+        showNotification('⚠️ Por favor ingresa un nombre para el stack');
+        return;
+    }
+    
+    if (stackBuilder.cards.length !== 52) {
+        showNotification(`⚠️ Necesitas exactamente 52 cartas. Actualmente tienes ${stackBuilder.cards.length}.`);
+        return;
+    }
+    
+    // Crear ID único para el stack
+    const stackId = 'custom_' + Date.now();
+    
+    // Guardar en stacks global
+    stacks[stackId] = [...stackBuilder.cards];
+    
+    // Guardar en state para persistencia
+    if (!state.customStacks) {
+        state.customStacks = {};
+    }
+    state.customStacks[stackId] = {
+        name: name,
+        cards: [...stackBuilder.cards],
+        createdAt: new Date().toISOString()
+    };
+    
+    // Cambiar a este stack
+    state.currentStack = stackId;
+    
+    saveState();
+    updateStackSelector();
+    updateStackDisplay();
+    
+    showNotification(`✅ Stack "${name}" creado y activado`);
+    
+    // Limpiar form
+    nameInput.value = '';
+    stackBuilder.cards = [];
+    stackBuilder.currentRank = null;
+    stackBuilder.currentSuit = null;
+    updateStackBuilderDisplay();
+    updateCardPreview();
+    document.querySelectorAll('.card-key-btn').forEach(btn => btn.classList.remove('selected'));
+    
+    // Volver a main
+    setTimeout(() => showMainScreen(), 1500);
+}
+
+function updateStackSelector() {
+    const selector = document.getElementById('stackType');
+    if (!selector) return;
+    
+    // Limpiar opciones
+    selector.innerHTML = `
+        <option value="mnemonica">Mnemonica (Tamariz)</option>
+        <option value="aronson">Aronson Stack</option>
+        <option value="eight-kings">Eight Kings</option>
+        <option value="si-stebbins">Si Stebbins</option>
+    `;
+    
+    // Añadir custom stacks
+    if (state.customStacks) {
+        Object.keys(state.customStacks).forEach(stackId => {
+            const stack = state.customStacks[stackId];
+            const option = document.createElement('option');
+            option.value = stackId;
+            option.textContent = `${stack.name} ⭐`;
+            selector.appendChild(option);
+        });
+    }
+    
+    // Seleccionar el stack actual
+    selector.value = state.currentStack;
+}
 
 console.log('MAXIM: app.js loaded');
 console.log('========================================');
