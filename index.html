@@ -645,7 +645,8 @@
                         <option value="eight-kings">Eight Kings</option>
                         <option value="si-stebbins">Si Stebbins</option>
                     </select>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    
+                    <div id="customStackButtons" style="display: none; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
                         <button onclick="showScreen('stackScreen')" style="
                             padding: 14px;
                             background: rgba(255,255,255,0.08);
@@ -657,18 +658,31 @@
                             cursor: pointer;
                             transition: all 0.2s;
                         ">📋 Ver Stack</button>
-                        <button onclick="showScreen('createStackScreen')" style="
+                        <button onclick="deleteCurrentCustomStack()" style="
                             padding: 14px;
-                            background: linear-gradient(135deg, rgba(103, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
-                            border: 1px solid rgba(118, 75, 162, 0.5);
+                            background: rgba(232, 74, 95, 0.2);
+                            border: 1px solid rgba(232, 74, 95, 0.5);
                             border-radius: 12px;
                             color: white;
                             font-size: 13px;
                             font-weight: 500;
                             cursor: pointer;
                             transition: all 0.2s;
-                        ">✨ Crear Stack</button>
+                        ">🗑️ Eliminar</button>
                     </div>
+                    
+                    <button onclick="showScreen('createStackScreen')" style="
+                        width: 100%;
+                        padding: 14px;
+                        background: linear-gradient(135deg, rgba(103, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+                        border: 1px solid rgba(118, 75, 162, 0.5);
+                        border-radius: 12px;
+                        color: white;
+                        font-size: 14px;
+                        font-weight: 500;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                    ">✨ Crear Nuevo Stack</button>
                 </div>
             </div>
 
@@ -1011,19 +1025,19 @@
                 <div style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 16px; margin-bottom: 12px;">
                     <h4 style="font-size: 13px; opacity: 0.7; margin-bottom: 12px; text-align: center;">RANGO</h4>
                     <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">
-                        <button onclick="selectRank('A')" class="card-key-btn">A</button>
-                        <button onclick="selectRank('2')" class="card-key-btn">2</button>
-                        <button onclick="selectRank('3')" class="card-key-btn">3</button>
-                        <button onclick="selectRank('4')" class="card-key-btn">4</button>
-                        <button onclick="selectRank('5')" class="card-key-btn">5</button>
-                        <button onclick="selectRank('6')" class="card-key-btn">6</button>
-                        <button onclick="selectRank('7')" class="card-key-btn">7</button>
-                        <button onclick="selectRank('8')" class="card-key-btn">8</button>
-                        <button onclick="selectRank('9')" class="card-key-btn">9</button>
-                        <button onclick="selectRank('10')" class="card-key-btn" style="grid-column: span 2;">10</button>
-                        <button onclick="selectRank('J')" class="card-key-btn">J</button>
-                        <button onclick="selectRank('Q')" class="card-key-btn">Q</button>
-                        <button onclick="selectRank('K')" class="card-key-btn">K</button>
+                        <button onclick="builderSelectRank('A')" class="card-key-btn">A</button>
+                        <button onclick="builderSelectRank('2')" class="card-key-btn">2</button>
+                        <button onclick="builderSelectRank('3')" class="card-key-btn">3</button>
+                        <button onclick="builderSelectRank('4')" class="card-key-btn">4</button>
+                        <button onclick="builderSelectRank('5')" class="card-key-btn">5</button>
+                        <button onclick="builderSelectRank('6')" class="card-key-btn">6</button>
+                        <button onclick="builderSelectRank('7')" class="card-key-btn">7</button>
+                        <button onclick="builderSelectRank('8')" class="card-key-btn">8</button>
+                        <button onclick="builderSelectRank('9')" class="card-key-btn">9</button>
+                        <button onclick="builderSelectRank('10')" class="card-key-btn" style="grid-column: span 2;">10</button>
+                        <button onclick="builderSelectRank('J')" class="card-key-btn">J</button>
+                        <button onclick="builderSelectRank('Q')" class="card-key-btn">Q</button>
+                        <button onclick="builderSelectRank('K')" class="card-key-btn">K</button>
                     </div>
                 </div>
 
@@ -1031,10 +1045,10 @@
                 <div style="background: rgba(255,255,255,0.08); padding: 16px; border-radius: 16px; margin-bottom: 16px;">
                     <h4 style="font-size: 13px; opacity: 0.7; margin-bottom: 12px; text-align: center;">PALO</h4>
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-                        <button onclick="selectSuit('♠')" class="card-key-btn" style="font-size: 28px;">♠</button>
-                        <button onclick="selectSuit('♥')" class="card-key-btn" style="font-size: 28px; color: #ff6b6b;">♥</button>
-                        <button onclick="selectSuit('♦')" class="card-key-btn" style="font-size: 28px; color: #ff6b6b;">♦</button>
-                        <button onclick="selectSuit('♣')" class="card-key-btn" style="font-size: 28px;">♣</button>
+                        <button onclick="builderSelectSuit('♠')" class="card-key-btn" style="font-size: 28px;">♠</button>
+                        <button onclick="builderSelectSuit('♥')" class="card-key-btn" style="font-size: 28px; color: #ff6b6b;">♥</button>
+                        <button onclick="builderSelectSuit('♦')" class="card-key-btn" style="font-size: 28px; color: #ff6b6b;">♦</button>
+                        <button onclick="builderSelectSuit('♣')" class="card-key-btn" style="font-size: 28px;">♣</button>
                     </div>
                 </div>
 
