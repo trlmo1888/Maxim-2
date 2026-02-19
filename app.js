@@ -424,31 +424,87 @@ function displayTargetResults(distance) {
     }
     
     container.innerHTML = `
-        <div class="reveal-card" style="background: rgba(255, 255, 255, 0.15); padding: 25px;">
-            <h3 style="margin: 0 0 20px 0; font-size: 20px; color: #fff;">💬 ${bestOut.name}</h3>
-            <p style="font-size: 22px; font-weight: 600; margin: 15px 0; line-height: 1.5; color: #fff;">
+        <div class="reveal-card" style="
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+        ">
+            <h3 style="
+                margin: 0 0 24px 0;
+                font-size: 18px;
+                color: #fff;
+                font-weight: 700;
+                opacity: 0.9;
+                letter-spacing: 0.5px;
+            ">💬 ${bestOut.name}</h3>
+            
+            <div style="
+                font-size: 24px;
+                font-weight: 600;
+                margin: 20px 0 30px;
+                line-height: 1.6;
+                color: #fff;
+                text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
                 ${bestOut.text}
-            </p>
+            </div>
             
             ${matchingCard ? `
-                <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2);">
-                    <p style="font-size: 18px; color: #fff; margin-bottom: 10px;">
-                        <strong>Deletrea: "${matchingCard}"</strong>
+                <div style="
+                    margin-top: 30px;
+                    padding-top: 24px;
+                    border-top: 2px solid rgba(255,255,255,0.2);
+                ">
+                    <p style="
+                        font-size: 18px;
+                        color: #a8e063;
+                        margin: 0;
+                        font-weight: 600;
+                    ">
+                        💚 Deletrea: "${matchingCard}"
                     </p>
                 </div>
             ` : ''}
             
-            <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.2);">
-                <p style="font-size: 18px; color: #fff; line-height: 1.8;">
-                    <strong>${posFromTop}</strong> desde arriba<br>
-                    <strong>${posFromBottom}</strong> desde abajo
+            <div style="
+                margin-top: 30px;
+                padding-top: 24px;
+                border-top: 2px solid rgba(255,255,255,0.2);
+            ">
+                <div style="font-size: 48px; font-weight: 300; margin-bottom: 16px; color: #fff; letter-spacing: -1px;">
+                    ${posFromTop}
+                </div>
+                <p style="font-size: 16px; color: rgba(255,255,255,0.8); margin-bottom: 20px;">
+                    desde arriba
+                </p>
+                
+                <div style="font-size: 48px; font-weight: 300; margin-bottom: 16px; color: #fff; letter-spacing: -1px;">
+                    ${posFromBottom}
+                </div>
+                <p style="font-size: 16px; color: rgba(255,255,255,0.8);">
+                    desde abajo
                 </p>
             </div>
         </div>
         
-        <div style="text-align: center; margin-top: 30px; padding: 20px; opacity: 0.8; font-size: 16px; border-top: 1px solid rgba(255,255,255,0.2); color: #fff;">
-            <div style="margin-bottom: 10px;">🎯 Carta Buscada: <strong>${targetName}</strong></div>
-            <div>🔑 Carta Vista: <strong>${keyName}</strong></div>
+        <div style="
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            opacity: 0.7;
+            font-size: 15px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+        ">
+            <div style="margin-bottom: 12px;">
+                🎯 Carta Buscada: <strong>${targetName}</strong>
+            </div>
+            <div>
+                🔑 Carta Vista: <strong>${keyName}</strong>
+            </div>
         </div>
     `;
 }
@@ -957,8 +1013,7 @@ function checkSumaFecha(position) {
 }
 
 function findBestOut(targetPosition, currentStack) {
-    // Dynamic Outs desactivados temporalmente
-    /*
+    // Buscar Dynamic Outs primero
     const dynamicOuts = [
         checkSumaMinutos(targetPosition),
         checkLetrasNombre(targetPosition, currentStack),
@@ -968,8 +1023,8 @@ function findBestOut(targetPosition, currentStack) {
     if (dynamicOuts.length > 0) {
         return dynamicOuts[0];
     }
-    */
     
+    // Si no hay dynamic, usar static
     const staticText = state.customStaticOuts[targetPosition] || defaultStaticOuts[targetPosition] || `Posición ${targetPosition}`;
     const isFromBottom = targetPosition > 26;
     
