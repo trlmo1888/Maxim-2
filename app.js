@@ -574,8 +574,45 @@ function changeStack() {
         saveState();
         updateStackDisplay();
         updateHomeStackDisplay();
+        updateCustomStackButtons();
         showNotification(`Stack cambiado a ${state.currentStack}`);
     }
+}
+
+function updateCustomStackButtons() {
+    const buttonsDiv = document.getElementById('customStackButtons');
+    if (!buttonsDiv) return;
+    
+    // Mostrar botones solo si es custom stack
+    if (state.currentStack.startsWith('custom_')) {
+        buttonsDiv.style.display = 'grid';
+    } else {
+        buttonsDiv.style.display = 'none';
+    }
+}
+
+function deleteCurrentCustomStack() {
+    if (!state.currentStack.startsWith('custom_')) return;
+    
+    const stackData = state.customStacks[state.currentStack];
+    if (!stackData) return;
+    
+    if (!confirm(`¿Eliminar el stack "${stackData.name}"?`)) return;
+    
+    // Eliminar
+    delete state.customStacks[state.currentStack];
+    delete stacks[state.currentStack];
+    
+    // Cambiar a mnemonica
+    state.currentStack = 'mnemonica';
+    
+    saveState();
+    updateStackSelector();
+    updateStackDisplay();
+    updateHomeStackDisplay();
+    updateCustomStackButtons();
+    
+    showNotification('✅ Stack eliminado');
 }
 
 function changeStopMode() {
@@ -1039,6 +1076,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     updateStackDisplay();
     updateHomeStackDisplay();
+    updateCustomStackButtons();
     
     console.log('MAXIM: Initialized');
 });
@@ -1065,9 +1103,9 @@ let stackBuilder = {
     currentSuit: null
 };
 
-function selectRank(rank) {
+function builderSelectRank(rank) {
     stackBuilder.currentRank = rank;
-    updateCardPreview();
+    builderUpdateCardPreview();
     
     // Highlight botón seleccionado
     document.querySelectorAll('.card-key-btn').forEach(btn => {
@@ -1079,7 +1117,7 @@ function selectRank(rank) {
     });
 }
 
-function selectSuit(suit) {
+function builderSelectSuit(suit) {
     if (!stackBuilder.currentRank) {
         showNotification('⚠️ Primero selecciona un rango (A, 2, 3... K)');
         return;
@@ -1095,8 +1133,8 @@ function selectSuit(suit) {
     stackBuilder.currentRank = null;
     stackBuilder.currentSuit = null;
     
-    updateStackBuilderDisplay();
-    updateCardPreview();
+    builderUpdateStackDisplay();
+    builderUpdateCardPreview();
     
     // Quitar highlights
     document.querySelectorAll('.card-key-btn').forEach(btn => btn.classList.remove('selected'));
@@ -1105,8 +1143,10 @@ function selectSuit(suit) {
     if ('vibrate' in navigator) navigator.vibrate(30);
 }
 
-function updateCardPreview() {
+function builderUpdateCardPreview() {
     const preview = document.getElementById('currentCardPreview');
+    if (!preview) return;
+    
     if (stackBuilder.currentRank) {
         preview.innerHTML = `<span style="opacity: 1;">${stackBuilder.currentRank}<span style="opacity: 0.3;">?</span></span>`;
     } else {
@@ -1114,10 +1154,11 @@ function updateCardPreview() {
     }
 }
 
-function updateStackBuilderDisplay() {
+function builderUpdateStackDisplay() {
     const display = document.getElementById('stackBuilderDisplay');
     const counter = document.getElementById('builderCardCount');
     
+    if (!display || !counter) return;
     if (stackBuilder.cards.length === 0) {
         display.innerHTML = '<span style="opacity: 0.5;">Cartas aparecerán aquí...</span>';
     } else {
@@ -1132,7 +1173,7 @@ function updateStackBuilderDisplay() {
 function deleteLastCard() {
     if (stackBuilder.cards.length > 0) {
         stackBuilder.cards.pop();
-        updateStackBuilderDisplay();
+        builderUpdateStackDisplay();
         if ('vibrate' in navigator) navigator.vibrate(50);
     }
 }
@@ -1144,8 +1185,8 @@ function clearAllCards() {
         stackBuilder.cards = [];
         stackBuilder.currentRank = null;
         stackBuilder.currentSuit = null;
-        updateStackBuilderDisplay();
-        updateCardPreview();
+        builderUpdateStackDisplay();
+        builderUpdateCardPreview();
         document.querySelectorAll('.card-key-btn').forEach(btn => btn.classList.remove('selected'));
     }
 }
@@ -1194,8 +1235,8 @@ function saveCustomStack() {
     stackBuilder.cards = [];
     stackBuilder.currentRank = null;
     stackBuilder.currentSuit = null;
-    updateStackBuilderDisplay();
-    updateCardPreview();
+    builderUpdateStackDisplay();
+    builderUpdateCardPreview();
     document.querySelectorAll('.card-key-btn').forEach(btn => btn.classList.remove('selected'));
     
     // Volver a main
