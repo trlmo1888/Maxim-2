@@ -574,47 +574,9 @@ function changeStack() {
         saveState();
         updateStackDisplay();
         updateHomeStackDisplay();
-        updateCustomStackButtons();
         showNotification(`Stack cambiado a ${state.currentStack}`);
     }
 }
-
-function updateCustomStackButtons() {
-    const buttonsDiv = document.getElementById('customStackButtons');
-    if (!buttonsDiv) return;
-    
-    // Mostrar botones solo si es custom stack
-    if (state.currentStack.startsWith('custom_')) {
-        buttonsDiv.style.display = 'grid';
-    } else {
-        buttonsDiv.style.display = 'none';
-    }
-}
-
-function deleteCurrentCustomStack() {
-    if (!state.currentStack.startsWith('custom_')) return;
-    
-    const stackData = state.customStacks[state.currentStack];
-    if (!stackData) return;
-    
-    if (!confirm(`¿Eliminar el stack "${stackData.name}"?`)) return;
-    
-    // Eliminar
-    delete state.customStacks[state.currentStack];
-    delete stacks[state.currentStack];
-    
-    // Cambiar a mnemonica
-    state.currentStack = 'mnemonica';
-    
-    saveState();
-    updateStackSelector();
-    updateStackDisplay();
-    updateHomeStackDisplay();
-    updateCustomStackButtons();
-    
-    showNotification('✅ Stack eliminado');
-}
-
 function changeStopMode() {
     const selector = document.getElementById('stopMode');
     if (selector) {
@@ -995,6 +957,8 @@ function checkSumaFecha(position) {
 }
 
 function findBestOut(targetPosition, currentStack) {
+    // Dynamic Outs desactivados temporalmente
+    /*
     const dynamicOuts = [
         checkSumaMinutos(targetPosition),
         checkLetrasNombre(targetPosition, currentStack),
@@ -1004,6 +968,7 @@ function findBestOut(targetPosition, currentStack) {
     if (dynamicOuts.length > 0) {
         return dynamicOuts[0];
     }
+    */
     
     const staticText = state.customStaticOuts[targetPosition] || defaultStaticOuts[targetPosition] || `Posición ${targetPosition}`;
     const isFromBottom = targetPosition > 26;
@@ -1060,14 +1025,10 @@ document.addEventListener('DOMContentLoaded', function() {
         state.customStaticOuts = { ...defaultStaticOuts };
     }
     
-    // Cargar custom stacks
-    if (state.customStacks) {
-        Object.keys(state.customStacks).forEach(stackId => {
-            stacks[stackId] = state.customStacks[stackId].cards;
-        });
+    const stackType = document.getElementById('stackType');
+    if (stackType) {
+        stackType.value = state.currentStack;
     }
-    
-    updateStackSelector();
     
     const stopMode = document.getElementById('stopMode');
     if (stopMode) {
@@ -1076,7 +1037,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     updateStackDisplay();
     updateHomeStackDisplay();
-    updateCustomStackButtons();
     
     console.log('MAXIM: Initialized');
 });
@@ -1092,183 +1052,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 */
-
-// ============================================
-// CUSTOM STACKS CREATOR - CARD CALCULATOR
-// ============================================
-
-let stackBuilder = {
-    cards: [],
-    currentRank: null,
-    currentSuit: null
-};
-
-function builderSelectRank(rank) {
-    stackBuilder.currentRank = rank;
-    builderUpdateCardPreview();
-    
-    // Highlight botón seleccionado
-    document.querySelectorAll('.card-key-btn').forEach(btn => {
-        if (btn.textContent === rank) {
-            btn.classList.add('selected');
-        } else if (['A','2','3','4','5','6','7','8','9','10','J','Q','K'].includes(btn.textContent)) {
-            btn.classList.remove('selected');
-        }
-    });
-}
-
-function builderSelectSuit(suit) {
-    if (!stackBuilder.currentRank) {
-        showNotification('⚠️ Primero selecciona un rango (A, 2, 3... K)');
-        return;
-    }
-    
-    stackBuilder.currentSuit = suit;
-    
-    // Añadir carta a la lista
-    const card = stackBuilder.currentRank + suit;
-    stackBuilder.cards.push(card);
-    
-    // Reset selección
-    stackBuilder.currentRank = null;
-    stackBuilder.currentSuit = null;
-    
-    builderUpdateStackDisplay();
-    builderUpdateCardPreview();
-    
-    // Quitar highlights
-    document.querySelectorAll('.card-key-btn').forEach(btn => btn.classList.remove('selected'));
-    
-    // Vibración
-    if ('vibrate' in navigator) navigator.vibrate(30);
-}
-
-function builderUpdateCardPreview() {
-    const preview = document.getElementById('currentCardPreview');
-    if (!preview) return;
-    
-    if (stackBuilder.currentRank) {
-        preview.innerHTML = `<span style="opacity: 1;">${stackBuilder.currentRank}<span style="opacity: 0.3;">?</span></span>`;
-    } else {
-        preview.innerHTML = '<span style="opacity: 0.3;">?</span>';
-    }
-}
-
-function builderUpdateStackDisplay() {
-    const display = document.getElementById('stackBuilderDisplay');
-    const counter = document.getElementById('builderCardCount');
-    
-    if (!display || !counter) return;
-    if (stackBuilder.cards.length === 0) {
-        display.innerHTML = '<span style="opacity: 0.5;">Cartas aparecerán aquí...</span>';
-    } else {
-        display.textContent = stackBuilder.cards.join(', ');
-    }
-    
-    const count = stackBuilder.cards.length;
-    counter.textContent = `${count} / 52 cartas`;
-    counter.style.color = count === 52 ? '#a8e063' : count > 52 ? '#e84a5f' : 'white';
-}
-
-function deleteLastCard() {
-    if (stackBuilder.cards.length > 0) {
-        stackBuilder.cards.pop();
-        builderUpdateStackDisplay();
-        if ('vibrate' in navigator) navigator.vibrate(50);
-    }
-}
-
-function clearAllCards() {
-    if (stackBuilder.cards.length === 0) return;
-    
-    if (confirm('¿Borrar todas las cartas?')) {
-        stackBuilder.cards = [];
-        stackBuilder.currentRank = null;
-        stackBuilder.currentSuit = null;
-        builderUpdateStackDisplay();
-        builderUpdateCardPreview();
-        document.querySelectorAll('.card-key-btn').forEach(btn => btn.classList.remove('selected'));
-    }
-}
-
-function saveCustomStack() {
-    const nameInput = document.getElementById('customStackName');
-    const name = nameInput.value.trim();
-    
-    if (!name) {
-        showNotification('⚠️ Por favor ingresa un nombre para el stack');
-        return;
-    }
-    
-    if (stackBuilder.cards.length !== 52) {
-        showNotification(`⚠️ Necesitas exactamente 52 cartas. Actualmente tienes ${stackBuilder.cards.length}.`);
-        return;
-    }
-    
-    // Crear ID único para el stack
-    const stackId = 'custom_' + Date.now();
-    
-    // Guardar en stacks global
-    stacks[stackId] = [...stackBuilder.cards];
-    
-    // Guardar en state para persistencia
-    if (!state.customStacks) {
-        state.customStacks = {};
-    }
-    state.customStacks[stackId] = {
-        name: name,
-        cards: [...stackBuilder.cards],
-        createdAt: new Date().toISOString()
-    };
-    
-    // Cambiar a este stack
-    state.currentStack = stackId;
-    
-    saveState();
-    updateStackSelector();
-    updateStackDisplay();
-    
-    showNotification(`✅ Stack "${name}" creado y activado`);
-    
-    // Limpiar form
-    nameInput.value = '';
-    stackBuilder.cards = [];
-    stackBuilder.currentRank = null;
-    stackBuilder.currentSuit = null;
-    builderUpdateStackDisplay();
-    builderUpdateCardPreview();
-    document.querySelectorAll('.card-key-btn').forEach(btn => btn.classList.remove('selected'));
-    
-    // Volver a main
-    setTimeout(() => showMainScreen(), 1500);
-}
-
-function updateStackSelector() {
-    const selector = document.getElementById('stackType');
-    if (!selector) return;
-    
-    // Limpiar opciones
-    selector.innerHTML = `
-        <option value="mnemonica">Mnemonica (Tamariz)</option>
-        <option value="aronson">Aronson Stack</option>
-        <option value="eight-kings">Eight Kings</option>
-        <option value="si-stebbins">Si Stebbins</option>
-    `;
-    
-    // Añadir custom stacks
-    if (state.customStacks) {
-        Object.keys(state.customStacks).forEach(stackId => {
-            const stack = state.customStacks[stackId];
-            const option = document.createElement('option');
-            option.value = stackId;
-            option.textContent = `${stack.name} ⭐`;
-            selector.appendChild(option);
-        });
-    }
-    
-    // Seleccionar el stack actual
-    selector.value = state.currentStack;
-}
 
 console.log('MAXIM: app.js loaded');
 console.log('========================================');
