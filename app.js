@@ -247,6 +247,12 @@ function calculateTargetPosition() {
         distance = (52 - keyPosition) + targetPosition;
     }
     
+    console.log('===== ANTES DE DISPLAY =====');
+    console.log('Distance calculada:', distance);
+    console.log('defaultStaticOuts:', typeof defaultStaticOuts);
+    console.log('defaultStaticOuts[' + distance + ']:', defaultStaticOuts[distance]);
+    console.log('============================');
+    
     displayTargetResults(distance);
     showResultsScreen();
 }
@@ -395,22 +401,37 @@ function displayTargetResults(distance) {
     const targetName = getCardName(state.targetCard);
     const keyName = getCardName(state.keyCard);
     
-    // Buscar la mejor OUT (Dynamic o Static)
-    const bestOut = findBestOut(distance, state.currentStack);
+    // Calcular posiciones
+    const posFromTop = distance;
+    const posFromBottom = 53 - distance;
     
-    console.log('=== REVELACIÓN DEBUG ===');
+    // Buscar Static Out (primero desde arriba, luego desde abajo)
+    let outText = defaultStaticOuts[posFromTop];
+    let outPosition = posFromTop;
+    let outDirection = 'desde arriba';
+    
+    // Si no hay out para arriba, buscar para abajo
+    if (!outText && defaultStaticOuts[posFromBottom]) {
+        outText = defaultStaticOuts[posFromBottom];
+        outPosition = posFromBottom;
+        outDirection = 'desde abajo';
+    }
+    
+    // Si aún no hay, usar genérico
+    if (!outText) {
+        outText = `Posición ${posFromTop}`;
+        outDirection = 'desde arriba';
+    }
+    
+    console.log('=== REVELACIÓN ===');
     console.log('Distancia:', distance);
-    console.log('Best Out:', bestOut);
-    console.log('Best Out Text:', bestOut.text);
-    console.log('=======================');
+    console.log('OUT Text:', outText);
+    console.log('Posición:', outPosition, outDirection);
+    console.log('==================');
     
     document.getElementById('selectedCardName').textContent = 'Revelaciones';
     
     const container = document.getElementById('revealMethods');
-    
-    // Calcular posiciones
-    const posFromTop = distance;
-    const posFromBottom = 53 - distance;
     
     // Buscar carta que coincida con las letras
     let matchingCard = null;
@@ -445,7 +466,7 @@ function displayTargetResults(distance) {
                 font-weight: 700;
                 opacity: 0.9;
                 letter-spacing: 0.5px;
-            ">💬 ${bestOut.name}</h3>
+            ">💬 Static Out</h3>
             
             <div style="
                 font-size: 20px;
@@ -455,7 +476,7 @@ function displayTargetResults(distance) {
                 color: #fff;
                 text-shadow: 0 2px 8px rgba(0,0,0,0.3);
             ">
-                ${bestOut.text}
+                ${outText}
             </div>
             
             ${matchingCard ? `
