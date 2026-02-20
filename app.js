@@ -398,6 +398,12 @@ function displayTargetResults(distance) {
     // Buscar la mejor OUT (Dynamic o Static)
     const bestOut = findBestOut(distance, state.currentStack);
     
+    console.log('=== REVELACIÓN DEBUG ===');
+    console.log('Distancia:', distance);
+    console.log('Best Out:', bestOut);
+    console.log('Best Out Text:', bestOut.text);
+    console.log('=======================');
+    
     document.getElementById('selectedCardName').textContent = 'Revelaciones';
     
     const container = document.getElementById('revealMethods');
