@@ -269,9 +269,11 @@ class IOSTimer {
     }
 
     stop() {
+        const doubleClickEnabled = typeof state !== 'undefined' ? (state.doubleClickEnabled !== false) : true;
+        
         // Si está corriendo → Parar + Alarma
         if (this.isRunning && this.remainingSeconds > 0) {
-            console.log('TIMER: Detenido manualmente - Sonando alarma');
+            console.log('TIMER: Detenido manualmente');
             
             // Parar el timer
             clearInterval(this.interval);
@@ -291,7 +293,19 @@ class IOSTimer {
             document.getElementById('timerDisplay').classList.add('timer-pulse');
             document.getElementById('pauseBtn').style.display = 'none';
             
-            return; // NO continuar, esperar segundo click
+            // Si doble click desactivado → Continuar directamente
+            if (!doubleClickEnabled) {
+                setTimeout(() => {
+                    this.audio.pause();
+                    this.audio.currentTime = 0;
+                    document.getElementById('timerModal').classList.remove('active');
+                    if (typeof showScreen === 'function') {
+                        showScreen('keyCardSuitScreen');
+                    }
+                }, 100);
+            }
+            
+            return; // NO continuar si doble click activado
         }
         
         // Segunda vez (alarma sonando) → Parar alarma y continuar
