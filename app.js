@@ -1332,6 +1332,14 @@ document.addEventListener('DOMContentLoaded', function() {
     updateStackDisplay();
     updateHomeStackDisplay();
     
+    // Añadir listener para botón de ajustes
+    const settingsButton = document.getElementById('settingsButton');
+    if (settingsButton) {
+        settingsButton.addEventListener('click', function() {
+            showScreen('settingsScreen');
+        });
+    }
+    
     console.log('MAXIM: Initialized');
 });
 
