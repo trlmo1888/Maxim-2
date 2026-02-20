@@ -1334,10 +1334,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Añadir listener para botón de ajustes
     const settingsButton = document.getElementById('settingsButton');
+    console.log('Settings button found:', settingsButton);
     if (settingsButton) {
         settingsButton.addEventListener('click', function() {
+            console.log('Settings button clicked!');
             showScreen('settingsScreen');
         });
+        console.log('Settings listener added');
+    } else {
+        console.error('Settings button NOT found!');
     }
     
     console.log('MAXIM: Initialized');
