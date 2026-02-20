@@ -442,7 +442,7 @@ function displayTargetResults(distance) {
             ">💬 ${bestOut.name}</h3>
             
             <div style="
-                font-size: 24px;
+                font-size: 20px;
                 font-weight: 600;
                 margin: 20px 0 30px;
                 line-height: 1.6;
@@ -474,19 +474,13 @@ function displayTargetResults(distance) {
                 padding-top: 24px;
                 border-top: 2px solid rgba(255,255,255,0.2);
             ">
-                <div style="font-size: 48px; font-weight: 300; margin-bottom: 16px; color: #fff; letter-spacing: -1px;">
-                    ${posFromTop}
+                <div style="font-size: 20px; font-weight: 600; margin-bottom: 8px; color: #fff;">
+                    ${posFromTop} desde arriba
                 </div>
-                <p style="font-size: 16px; color: rgba(255,255,255,0.8); margin-bottom: 20px;">
-                    desde arriba
-                </p>
                 
-                <div style="font-size: 48px; font-weight: 300; margin-bottom: 16px; color: #fff; letter-spacing: -1px;">
-                    ${posFromBottom}
+                <div style="font-size: 20px; font-weight: 600; margin-top: 20px; color: #fff;">
+                    ${posFromBottom} desde abajo
                 </div>
-                <p style="font-size: 16px; color: rgba(255,255,255,0.8);">
-                    desde abajo
-                </p>
             </div>
         </div>
         
