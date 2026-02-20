@@ -13,6 +13,7 @@ const state = {
     keyCard: null, // Carta de abajo que vemos
     currentStack: 'mnemonica',
     customStacks: {}, // Stacks personalizados creados por el usuario
+    doubleClickEnabled: true, // Doble click en timer (true = sí, false = no)
     stopMode: 1, // 1 = detener directo, 2 = detener sonido primero
     customStaticOuts: {}, // Se cargará con defaults
     dynamicOutsConfig: {
@@ -405,26 +406,51 @@ function displayTargetResults(distance) {
     const posFromTop = distance;
     const posFromBottom = 53 - distance;
     
-    // Buscar Static Out (primero desde arriba, luego desde abajo)
-    let outText = defaultStaticOuts[posFromTop];
-    let outPosition = posFromTop;
-    let outDirection = 'desde arriba';
+    // **PRIMERO: Buscar Dynamic Outs**
+    const dynamicOuts = [
+        checkSumaMinutos(posFromTop),
+        checkSumaMinutos(posFromBottom),
+        checkLetrasNombre(posFromTop, state.currentStack),
+        checkLetrasNombre(posFromBottom, state.currentStack),
+        checkSumaFecha(posFromTop),
+        checkSumaFecha(posFromBottom)
+    ].filter(out => out !== null);
     
-    // Si no hay out para arriba, buscar para abajo
-    if (!outText && defaultStaticOuts[posFromBottom]) {
-        outText = defaultStaticOuts[posFromBottom];
-        outPosition = posFromBottom;
-        outDirection = 'desde abajo';
-    }
+    let outText, outName, outPosition, outDirection;
     
-    // Si aún no hay, usar genérico
-    if (!outText) {
-        outText = `Posición ${posFromTop}`;
+    if (dynamicOuts.length > 0) {
+        // Hay Dynamic Out - USAR
+        const bestDynamic = dynamicOuts[0];
+        outText = bestDynamic.text;
+        outName = bestDynamic.name;
+        outPosition = bestDynamic.position;
+        outDirection = bestDynamic.fromBottom ? 'desde abajo' : 'desde arriba';
+        
+        console.log('🎯 DYNAMIC OUT encontrado:', outName);
+    } else {
+        // NO hay Dynamic - Usar Static Out
+        outText = defaultStaticOuts[posFromTop];
+        outName = 'Static Out';
+        outPosition = posFromTop;
         outDirection = 'desde arriba';
+        
+        // Si no hay out para arriba, buscar para abajo
+        if (!outText && defaultStaticOuts[posFromBottom]) {
+            outText = defaultStaticOuts[posFromBottom];
+            outPosition = posFromBottom;
+            outDirection = 'desde abajo';
+        }
+        
+        // Si aún no hay, usar genérico
+        if (!outText) {
+            outText = `Posición ${posFromTop}`;
+        }
+        
+        console.log('📋 STATIC OUT usado');
     }
     
     console.log('=== REVELACIÓN ===');
-    console.log('Distancia:', distance);
+    console.log('OUT Name:', outName);
     console.log('OUT Text:', outText);
     console.log('Posición:', outPosition, outDirection);
     console.log('==================');
@@ -466,7 +492,7 @@ function displayTargetResults(distance) {
                 font-weight: 700;
                 opacity: 0.9;
                 letter-spacing: 0.5px;
-            ">💬 Static Out</h3>
+            ">💬 ${outName}</h3>
             
             <div style="
                 font-size: 20px;
@@ -671,58 +697,143 @@ function showEditOuts() {
     let html = '';
     
     // Posiciones 1-26 (boca arriba)
-    html += '<h3 style="margin-top: 0;">Posiciones 1-26 (Boca Arriba)</h3>';
+    html += '<h3 style="margin-top: 0; margin-bottom: 16px;">Posiciones 1-26 (Boca Arriba)</h3>';
     for (let i = 1; i <= 26; i++) {
         const currentValue = state.customStaticOuts[i] || defaultStaticOuts[i] || '';
         html += `
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 600;">
-                    Posición ${i}
-                </label>
-                <input 
-                    type="text" 
-                    id="out_${i}" 
-                    value="${currentValue.replace(/"/g, '&quot;')}"
-                    onchange="updateStaticOut(${i})"
-                    style="
-                        width: 100%;
-                        padding: 10px;
-                        border: 2px solid rgba(255,255,255,0.2);
-                        border-radius: 8px;
-                        background: rgba(255,255,255,0.1);
-                        color: white;
-                        font-size: 14px;
-                    "
-                />
+            <div id="outItem_${i}" style="
+                background: rgba(255,255,255,0.08);
+                border: 1px solid rgba(255,255,255,0.15);
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 12px;
+                position: relative;
+            ">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <strong style="font-size: 15px;">Posición ${i}</strong>
+                    <button onclick="toggleEditOut(${i})" style="
+                        background: none;
+                        border: none;
+                        font-size: 20px;
+                        cursor: pointer;
+                        padding: 4px 8px;
+                    ">✏️</button>
+                </div>
+                <div id="outDisplay_${i}" style="font-size: 14px; opacity: 0.9; line-height: 1.5;">
+                    ${currentValue}
+                </div>
+                <div id="outEdit_${i}" style="display: none;">
+                    <textarea 
+                        id="outInput_${i}" 
+                        style="
+                            width: 100%;
+                            min-height: 60px;
+                            padding: 12px;
+                            border: 2px solid rgba(255,255,255,0.3);
+                            border-radius: 8px;
+                            background: rgba(0,0,0,0.3);
+                            color: white;
+                            font-size: 14px;
+                            resize: vertical;
+                            margin-bottom: 8px;
+                        "
+                    >${currentValue}</textarea>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="saveOut(${i})" style="
+                            flex: 1;
+                            padding: 10px;
+                            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+                            border: none;
+                            border-radius: 8px;
+                            color: white;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">✓ Guardar</button>
+                        <button onclick="cancelEditOut(${i})" style="
+                            flex: 1;
+                            padding: 10px;
+                            background: rgba(255,255,255,0.1);
+                            border: 1px solid rgba(255,255,255,0.2);
+                            border-radius: 8px;
+                            color: white;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">✕ Cancelar</button>
+                    </div>
+                </div>
             </div>
         `;
     }
     
     // Posiciones especiales (boca abajo)
-    html += '<h3 style="margin-top: 30px;">Posiciones Especiales (Boca Abajo)</h3>';
+    html += '<h3 style="margin-top: 30px; margin-bottom: 16px;">Posiciones Especiales (Boca Abajo)</h3>';
     const specialPositions = [43, 44];
     for (const pos of specialPositions) {
         const currentValue = state.customStaticOuts[pos] || defaultStaticOuts[pos] || '';
         html += `
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 600;">
-                    Posición ${pos} (${53 - pos} boca abajo)
-                </label>
-                <input 
-                    type="text" 
-                    id="out_${pos}" 
-                    value="${currentValue.replace(/"/g, '&quot;')}"
-                    onchange="updateStaticOut(${pos})"
-                    style="
-                        width: 100%;
-                        padding: 10px;
-                        border: 2px solid rgba(255,255,255,0.2);
-                        border-radius: 8px;
-                        background: rgba(255,255,255,0.1);
-                        color: white;
-                        font-size: 14px;
-                    "
-                />
+            <div id="outItem_${pos}" style="
+                background: rgba(255,255,255,0.08);
+                border: 1px solid rgba(255,255,255,0.15);
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 12px;
+                position: relative;
+            ">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                    <strong style="font-size: 15px;">Posición ${pos} (${53 - pos} boca abajo)</strong>
+                    <button onclick="toggleEditOut(${pos})" style="
+                        background: none;
+                        border: none;
+                        font-size: 20px;
+                        cursor: pointer;
+                        padding: 4px 8px;
+                    ">✏️</button>
+                </div>
+                <div id="outDisplay_${pos}" style="font-size: 14px; opacity: 0.9; line-height: 1.5;">
+                    ${currentValue}
+                </div>
+                <div id="outEdit_${pos}" style="display: none;">
+                    <textarea 
+                        id="outInput_${pos}" 
+                        style="
+                            width: 100%;
+                            min-height: 60px;
+                            padding: 12px;
+                            border: 2px solid rgba(255,255,255,0.3);
+                            border-radius: 8px;
+                            background: rgba(0,0,0,0.3);
+                            color: white;
+                            font-size: 14px;
+                            resize: vertical;
+                            margin-bottom: 8px;
+                        "
+                    >${currentValue}</textarea>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="saveOut(${pos})" style="
+                            flex: 1;
+                            padding: 10px;
+                            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+                            border: none;
+                            border-radius: 8px;
+                            color: white;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">✓ Guardar</button>
+                        <button onclick="cancelEditOut(${pos})" style="
+                            flex: 1;
+                            padding: 10px;
+                            background: rgba(255,255,255,0.1);
+                            border: 1px solid rgba(255,255,255,0.2);
+                            border-radius: 8px;
+                            color: white;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">✕ Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
             </div>
         `;
     }
@@ -746,6 +857,77 @@ function resetStaticOuts() {
         showEditOuts();
         showNotification('Static Outs restauradas');
     }
+}
+
+// Funciones para editor mejorado
+function toggleEditOut(position) {
+    const display = document.getElementById(`outDisplay_${position}`);
+    const edit = document.getElementById(`outEdit_${position}`);
+    
+    if (display && edit) {
+        display.style.display = 'none';
+        edit.style.display = 'block';
+    }
+}
+
+function saveOut(position) {
+    const input = document.getElementById(`outInput_${position}`);
+    const value = input.value.trim();
+    
+    if (value) {
+        state.customStaticOuts[position] = value;
+        saveState();
+        
+        // Actualizar display
+        document.getElementById(`outDisplay_${position}`).textContent = value;
+        cancelEditOut(position);
+        
+        showNotification('Out guardado');
+    }
+}
+
+function cancelEditOut(position) {
+    const display = document.getElementById(`outDisplay_${position}`);
+    const edit = document.getElementById(`outEdit_${position}`);
+    
+    if (display && edit) {
+        display.style.display = 'block';
+        edit.style.display = 'none';
+    }
+}
+
+// Toggle doble click
+function toggleDoubleClick() {
+    const checkbox = document.getElementById('doubleClickEnabled');
+    if (checkbox) {
+        state.doubleClickEnabled = checkbox.checked;
+        saveState();
+        showNotification(checkbox.checked ? 'Doble click activado' : 'Doble click desactivado');
+    }
+}
+
+// Actualizar adelantar opción
+function updateAdelantarOpcion() {
+    const select = document.getElementById('adelantarOpcion');
+    if (!select) return;
+    
+    const value = select.value;
+    
+    if (value === 'disabled') {
+        state.dynamicOutsConfig.sumaMinutos.adelantarSi = 0;
+        state.dynamicOutsConfig.sumaMinutos.adelantarMinutos = 0;
+    } else if (value.startsWith('manual')) {
+        const mins = parseInt(value.replace('manual', ''));
+        state.dynamicOutsConfig.sumaMinutos.adelantarSi = 0;
+        state.dynamicOutsConfig.sumaMinutos.adelantarMinutos = mins;
+    } else {
+        const segs = parseInt(value);
+        state.dynamicOutsConfig.sumaMinutos.adelantarSi = segs;
+        state.dynamicOutsConfig.sumaMinutos.adelantarMinutos = 0;
+    }
+    
+    saveState();
+    showNotification('Configuración actualizada');
 }
 
 // Dynamic Outs Configuration
@@ -1111,6 +1293,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const stopMode = document.getElementById('stopMode');
     if (stopMode) {
         stopMode.value = state.stopMode || 1;
+    }
+    
+    // Inicializar checkboxes y selects de ajustes
+    const doubleClickCheckbox = document.getElementById('doubleClickEnabled');
+    if (doubleClickCheckbox) {
+        doubleClickCheckbox.checked = state.doubleClickEnabled !== false;
+    }
+    
+    const dynSumaMinutos = document.getElementById('dynSumaMinutos');
+    if (dynSumaMinutos) {
+        dynSumaMinutos.checked = state.dynamicOutsConfig?.sumaMinutos?.enabled !== false;
+    }
+    
+    const dynLetrasNombre = document.getElementById('dynLetrasNombre');
+    if (dynLetrasNombre) {
+        dynLetrasNombre.checked = state.dynamicOutsConfig?.letrasNombre?.enabled !== false;
+    }
+    
+    const dynSumaFecha = document.getElementById('dynSumaFecha');
+    if (dynSumaFecha) {
+        dynSumaFecha.checked = state.dynamicOutsConfig?.sumaFecha?.enabled !== false;
+    }
+    
+    // Inicializar select de adelantar minutos
+    const adelantarSelect = document.getElementById('adelantarOpcion');
+    if (adelantarSelect && state.dynamicOutsConfig?.sumaMinutos) {
+        const config = state.dynamicOutsConfig.sumaMinutos;
+        if (config.adelantarSi > 0) {
+            adelantarSelect.value = config.adelantarSi.toString();
+        } else if (config.adelantarMinutos > 0) {
+            adelantarSelect.value = 'manual' + config.adelantarMinutos;
+        } else {
+            adelantarSelect.value = 'disabled';
+        }
     }
     
     updateStackDisplay();
