@@ -269,47 +269,46 @@ class IOSTimer {
     }
 
     stop() {
-        // Obtener modo de detener del state
-        const stopMode = typeof state !== 'undefined' ? (state.stopMode || 1) : 1;
-        
-        if (stopMode === 1) {
-            // Modo 1: Detener directo
-            this.audio.pause();
-            this.audio.currentTime = 0;
+        // Si está corriendo → Parar + Alarma
+        if (this.isRunning && this.remainingSeconds > 0) {
+            console.log('TIMER: Detenido manualmente - Sonando alarma');
+            
+            // Parar el timer
             clearInterval(this.interval);
             this.isRunning = false;
+            this.remainingSeconds = 0;
             
-            // Cerrar timer
-            document.getElementById('timerModal').classList.remove('active');
+            // Reproducir alarma
+            this.audio.play();
             
-            // Ir DIRECTAMENTE a pantalla de key card
-            setTimeout(() => {
-                if (typeof showScreen === 'function') {
-                    showScreen('keyCardSuitScreen');
-                }
-            }, 100);
-        } else {
-            // Modo 2: Primera vez para sonido, segunda continúa
-            if (this.audio.paused) {
-                // Ya está parado el sonido, ahora sí continuamos
-                clearInterval(this.interval);
-                this.isRunning = false;
-                
-                // Cerrar timer
-                document.getElementById('timerModal').classList.remove('active');
-                
-                // Ir a siguiente pantalla
-                setTimeout(() => {
-                    if (typeof showScreen === 'function') {
-                        showScreen('keyCardSuitScreen');
-                    }
-                }, 100);
-            } else {
-                // Primera vez: solo parar sonido
-                this.audio.pause();
-                this.audio.currentTime = 0;
+            // Vibración
+            if ('vibrate' in navigator) {
+                navigator.vibrate([200, 100, 200]);
             }
+            
+            // Actualizar display a 00:00
+            document.getElementById('timerDisplay').textContent = '00:00';
+            document.getElementById('timerDisplay').classList.add('timer-pulse');
+            document.getElementById('pauseBtn').style.display = 'none';
+            
+            return; // NO continuar, esperar segundo click
         }
+        
+        // Segunda vez (alarma sonando) → Parar alarma y continuar
+        console.log('TIMER: Segundo click - Parando alarma y continuando');
+        
+        this.audio.pause();
+        this.audio.currentTime = 0;
+        
+        // Cerrar timer
+        document.getElementById('timerModal').classList.remove('active');
+        
+        // Ir a siguiente pantalla
+        setTimeout(() => {
+            if (typeof showScreen === 'function') {
+                showScreen('keyCardSuitScreen');
+            }
+        }, 100);
         
         if ('vibrate' in navigator) {
             navigator.vibrate(50);
