@@ -1025,8 +1025,10 @@ function findBestOut(targetPosition, currentStack) {
     }
     
     // Si no hay dynamic, usar static
-    const staticText = state.customStaticOuts[targetPosition] || defaultStaticOuts[targetPosition] || `Posición ${targetPosition}`;
+    const staticText = defaultStaticOuts[targetPosition] || state.customStaticOuts[targetPosition] || `Posición ${targetPosition}`;
     const isFromBottom = targetPosition > 26;
+    
+    console.log('Static Text encontrado:', staticText);
     
     return {
         name: "Static Out",
