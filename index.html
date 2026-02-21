@@ -611,33 +611,32 @@
         <div id="notification" class="notification"></div>
 
         <!-- Main Screen -->
-        <div id="mainScreen" class="screen active" style="display: flex; flex-direction: column; min-height: 100vh; padding: 30px 20px;">
-            <div class="logo-section" style="flex-shrink: 0; padding: 10px 0 15px;">
+        <div id="mainScreen" class="screen active" style="display: flex; flex-direction: column; min-height: 100vh; padding: 20px;">
+            <div class="logo-section" style="flex-shrink: 0; padding: 5px 0;">
                 <div class="logo-circle">
                     <span class="letter">M</span>
                 </div>
                 <div class="app-name">MAXIM ACAAN</div>
             </div>
 
-            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px;">
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 10px;">
                 <button class="perform-button" onclick="showTimerFirst()">
                     <div class="play-icon"></div>
                     <span>Ejecutar</span>
                 </button>
 
-                <div style="background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.08) 100%); padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-                    <h3 style="font-size: 15px; margin-bottom: 16px; opacity: 0.85; font-weight: 600;">Stack Actual</h3>
+                <div style="background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.08) 100%); padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                    <h3 style="font-size: 13px; margin-bottom: 8px; opacity: 0.85; font-weight: 600;">Stack</h3>
                     <select id="stackType" onchange="changeStack()" style="
                         width: 100%;
-                        padding: 16px;
+                        padding: 11px;
                         background: rgba(0,0,0,0.2);
                         color: white;
                         border: 2px solid rgba(255,255,255,0.25);
-                        border-radius: 14px;
-                        font-size: 16px;
+                        border-radius: 10px;
+                        font-size: 14px;
                         font-weight: 500;
                         cursor: pointer;
-                        transition: all 0.2s;
                     ">
                         <option value="mnemonica">Mnemonica (Tamariz)</option>
                         <option value="aronson">Aronson Stack</option>
@@ -645,21 +644,115 @@
                         <option value="si-stebbins">Si Stebbins</option>
                     </select>
                 </div>
+                
+                <!-- AJUSTES SIMPLES -->
+                <div style="background: rgba(255,255,255,0.08); padding: 14px; border-radius: 14px;">
+                    <h3 style="font-size: 13px; margin-bottom: 8px; opacity: 0.8; font-weight: 600;">Ajustes</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; font-size: 11px;">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="doubleClickEnabled" checked onchange="toggleDoubleClick()">
+                            <span class="checkmark"></span>
+                            <span class="label-text">Doble Click</span>
+                        </label>
+                        <button onclick="showScreen('editOutsScreen')" style="
+                            padding: 7px;
+                            background: rgba(255,255,255,0.1);
+                            border: 1px solid rgba(255,255,255,0.2);
+                            border-radius: 7px;
+                            color: white;
+                            font-size: 11px;
+                            cursor: pointer;
+                        ">✏️ Editar Outs</button>
+                    </div>
+                    
+                    <!-- Suma Minutos -->
+                    <select id="adelantarOpcion" onchange="updateAdelantarOpcion()" style="
+                        width: 100%;
+                        padding: 9px;
+                        background: rgba(0,0,0,0.2);
+                        color: white;
+                        border: 1px solid rgba(255,255,255,0.2);
+                        border-radius: 8px;
+                        font-size: 11px;
+                    ">
+                        <option value="disabled">🕐 Hora: OFF</option>
+                        <option value="10">🕐 Faltan < 10s</option>
+                        <option value="15">🕐 Faltan 10-15s</option>
+                        <option value="20" selected>🕐 Faltan 15-20s</option>
+                        <option value="25">🕐 Faltan 20-25s</option>
+                        <option value="30">🕐 Faltan 25-30s</option>
+                        <option value="manual1">🕐 +1min siempre</option>
+                        <option value="manual90">🕐 +1min 30s siempre</option>
+                        <option value="manual2">🕐 +2mins siempre</option>
+                    </select>
+                </div>
             </div>
 
-            <div style="flex-shrink: 0; text-align: center; opacity: 0.4; font-size: 11px; padding: 20px 0 10px;">
-                <button id="settingsButton" style="
-                    background: none;
-                    border: none;
-                    color: rgba(255,255,255,0.5);
-                    font-size: 24px;
-                    cursor: pointer;
-                    padding: 10px;
-                    margin-bottom: 10px;
-                ">⚙️</button>
-                <div>MAXIM v18 · Créditos: T.P.</div>
+            <div style="flex-shrink: 0; text-align: center; opacity: 0.3; font-size: 10px; padding: 8px 0;">
+                v19
             </div>
         </div>
+        
+        <style>
+            /* Checkboxes Pro (gradiente morado) */
+            .custom-checkbox {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                position: relative;
+                padding-left: 24px;
+            }
+            
+            .custom-checkbox input[type="checkbox"] {
+                position: absolute;
+                opacity: 0;
+                cursor: pointer;
+                height: 0;
+                width: 0;
+            }
+            
+            .custom-checkbox .checkmark {
+                position: absolute;
+                left: 0;
+                height: 16px;
+                width: 16px;
+                background-color: rgba(0,0,0,0.3);
+                border: 2px solid rgba(255,255,255,0.3);
+                border-radius: 4px;
+                transition: all 0.2s ease;
+            }
+            
+            .custom-checkbox:hover input ~ .checkmark {
+                background-color: rgba(255,255,255,0.1);
+            }
+            
+            .custom-checkbox input:checked ~ .checkmark {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-color: #764ba2;
+            }
+            
+            .custom-checkbox .checkmark:after {
+                content: "";
+                position: absolute;
+                display: none;
+                left: 4px;
+                top: 1px;
+                width: 4px;
+                height: 8px;
+                border: solid white;
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg);
+            }
+            
+            .custom-checkbox input:checked ~ .checkmark:after {
+                display: block;
+            }
+            
+            .custom-checkbox .label-text {
+                user-select: none;
+            }
+        </style>
 
         <!-- Perform Screen - Step 1: Select Suit -->
         <div id="performScreen" class="perform-screen">
