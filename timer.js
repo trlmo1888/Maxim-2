@@ -55,9 +55,12 @@ class IOSTimer {
                 </div>
 
                 <div class="timer-quick-buttons">
-                    <button class="timer-quick-btn" onclick="iosTimer.setQuickTime(0, 0, 15)">15s</button>
+                    <button class="timer-quick-btn" onclick="iosTimer.setQuickTime(0, 0, 10)">10s</button>
+                    <button class="timer-quick-btn" onclick="iosTimer.setQuickTime(0, 0, 20)">20s</button>
                     <button class="timer-quick-btn" onclick="iosTimer.setQuickTime(0, 0, 30)">30s</button>
-                    <button class="timer-quick-btn" onclick="iosTimer.setQuickTime(0, 1, 0)">1 min</button>
+                    <button class="timer-quick-btn" onclick="iosTimer.setQuickTime(0, 1, 0)">1min</button>
+                    <button class="timer-quick-btn" onclick="iosTimer.setQuickTime(0, 1, 30)">1:30</button>
+                    <button class="timer-quick-btn" onclick="iosTimer.setQuickTime(0, 2, 0)">2min</button>
                 </div>
 
                 <div class="timer-buttons">
