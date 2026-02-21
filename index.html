@@ -611,25 +611,25 @@
         <div id="notification" class="notification"></div>
 
         <!-- Main Screen -->
-        <div id="mainScreen" class="screen active" style="display: flex; flex-direction: column; min-height: 100vh; padding: 20px;">
-            <div class="logo-section" style="flex-shrink: 0; padding: 5px 0;">
+        <div id="mainScreen" class="screen active" style="display: flex; flex-direction: column; min-height: 100vh; padding: 15px;">
+            <div class="logo-section" style="flex-shrink: 0; padding: 0;">
                 <div class="logo-circle">
                     <span class="letter">M</span>
                 </div>
-                <div class="app-name">MAXIM ACAAN</div>
+                <div class="app-name" style="margin-top: 8px;">MAXIM ACAAN</div>
             </div>
 
-            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 10px;">
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px;">
                 <button class="perform-button" onclick="showTimerFirst()">
                     <div class="play-icon"></div>
                     <span>Ejecutar</span>
                 </button>
 
-                <div style="background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.08) 100%); padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
-                    <h3 style="font-size: 13px; margin-bottom: 8px; opacity: 0.85; font-weight: 600;">Stack</h3>
+                <div style="background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.08) 100%); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);">
+                    <h3 style="font-size: 12px; margin-bottom: 8px; opacity: 0.85; font-weight: 600;">Stack</h3>
                     <select id="stackType" onchange="changeStack()" style="
                         width: 100%;
-                        padding: 11px;
+                        padding: 10px;
                         background: rgba(0,0,0,0.2);
                         color: white;
                         border: 2px solid rgba(255,255,255,0.25);
@@ -645,36 +645,25 @@
                     </select>
                 </div>
                 
-                <!-- AJUSTES SIMPLES -->
-                <div style="background: rgba(255,255,255,0.08); padding: 14px; border-radius: 14px;">
-                    <h3 style="font-size: 13px; margin-bottom: 8px; opacity: 0.8; font-weight: 600;">Ajustes</h3>
+                <!-- AJUSTES -->
+                <div style="background: rgba(255,255,255,0.08); padding: 12px; border-radius: 12px;">
+                    <h3 style="font-size: 12px; margin-bottom: 8px; opacity: 0.8; font-weight: 600;">Ajustes</h3>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; font-size: 11px;">
-                        <label class="custom-checkbox">
-                            <input type="checkbox" id="doubleClickEnabled" checked onchange="toggleDoubleClick()">
-                            <span class="checkmark"></span>
-                            <span class="label-text">Doble Click</span>
-                        </label>
-                        <button id="editOutsButton" style="
-                            padding: 7px;
-                            background: rgba(255,255,255,0.1);
-                            border: 1px solid rgba(255,255,255,0.2);
-                            border-radius: 7px;
-                            color: white;
-                            font-size: 11px;
-                            cursor: pointer;
-                        ">✏️ Editar Outs</button>
-                    </div>
+                    <label class="custom-checkbox" style="margin-bottom: 6px;">
+                        <input type="checkbox" id="doubleClickEnabled" checked onchange="toggleDoubleClick()">
+                        <span class="checkmark"></span>
+                        <span class="label-text">Doble Click</span>
+                    </label>
                     
-                    <!-- Suma Minutos -->
                     <select id="adelantarOpcion" onchange="updateAdelantarOpcion()" style="
                         width: 100%;
-                        padding: 9px;
+                        padding: 8px;
                         background: rgba(0,0,0,0.2);
                         color: white;
                         border: 1px solid rgba(255,255,255,0.2);
                         border-radius: 8px;
                         font-size: 11px;
+                        margin-bottom: 8px;
                     ">
                         <option value="disabled">🕐 Hora: OFF</option>
                         <option value="10">🕐 Faltan < 10s</option>
@@ -686,15 +675,131 @@
                         <option value="manual90">🕐 +1min 30s siempre</option>
                         <option value="manual2">🕐 +2mins siempre</option>
                     </select>
+                    
+                    <!-- 26 Botones de Outs -->
+                    <div style="font-size: 10px; opacity: 0.6; margin-bottom: 4px;">Outs:</div>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;">
+                        <button onclick="openOutPopup(1)" class="out-btn">1</button>
+                        <button onclick="openOutPopup(2)" class="out-btn">2</button>
+                        <button onclick="openOutPopup(3)" class="out-btn">3</button>
+                        <button onclick="openOutPopup(4)" class="out-btn">4</button>
+                        <button onclick="openOutPopup(5)" class="out-btn">5</button>
+                        <button onclick="openOutPopup(6)" class="out-btn">6</button>
+                        <button onclick="openOutPopup(7)" class="out-btn">7</button>
+                        <button onclick="openOutPopup(8)" class="out-btn">8</button>
+                        <button onclick="openOutPopup(9)" class="out-btn">9</button>
+                        <button onclick="openOutPopup(10)" class="out-btn">10</button>
+                        <button onclick="openOutPopup(11)" class="out-btn">11</button>
+                        <button onclick="openOutPopup(12)" class="out-btn">12</button>
+                        <button onclick="openOutPopup(13)" class="out-btn">13</button>
+                        <button onclick="openOutPopup(14)" class="out-btn">14</button>
+                        <button onclick="openOutPopup(15)" class="out-btn">15</button>
+                        <button onclick="openOutPopup(16)" class="out-btn">16</button>
+                        <button onclick="openOutPopup(17)" class="out-btn">17</button>
+                        <button onclick="openOutPopup(18)" class="out-btn">18</button>
+                        <button onclick="openOutPopup(19)" class="out-btn">19</button>
+                        <button onclick="openOutPopup(20)" class="out-btn">20</button>
+                        <button onclick="openOutPopup(21)" class="out-btn">21</button>
+                        <button onclick="openOutPopup(22)" class="out-btn">22</button>
+                        <button onclick="openOutPopup(23)" class="out-btn">23</button>
+                        <button onclick="openOutPopup(24)" class="out-btn">24</button>
+                        <button onclick="openOutPopup(25)" class="out-btn">25</button>
+                        <button onclick="openOutPopup(26)" class="out-btn">26</button>
+                    </div>
                 </div>
             </div>
 
-            <div style="flex-shrink: 0; text-align: center; opacity: 0.3; font-size: 10px; padding: 8px 0;">
-                v19
+            <div style="flex-shrink: 0; text-align: center; opacity: 0.3; font-size: 10px; padding: 6px 0;">
+                v20
+            </div>
+        </div>
+        
+        <!-- Popup para editar OUT -->
+        <div id="outPopup" style="
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        " onclick="if(event.target.id === 'outPopup') closeOutPopup()">
+            <div onclick="event.stopPropagation()" style="
+                background: linear-gradient(135deg, #2d1b4e 0%, #1a0f2e 100%);
+                border-radius: 16px;
+                padding: 20px;
+                max-width: 90%;
+                width: 100%;
+                max-height: 80vh;
+                overflow-y: auto;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            ">
+                <h3 id="outPopupTitle" style="margin: 0 0 12px; font-size: 16px; font-weight: 600;">Editar Out #1</h3>
+                
+                <textarea id="outPopupTextarea" style="
+                    width: 100%;
+                    min-height: 100px;
+                    padding: 12px;
+                    background: rgba(0,0,0,0.3);
+                    border: 2px solid rgba(255,255,255,0.2);
+                    border-radius: 10px;
+                    color: white;
+                    font-size: 14px;
+                    resize: vertical;
+                    margin-bottom: 12px;
+                    font-family: inherit;
+                " placeholder="Escribe tu out aquí..."></textarea>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="saveOutFromPopup()" style="
+                        flex: 1;
+                        padding: 12px;
+                        background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+                        border: none;
+                        border-radius: 10px;
+                        color: white;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">✓ Guardar</button>
+                    <button onclick="closeOutPopup()" style="
+                        flex: 1;
+                        padding: 12px;
+                        background: rgba(255,255,255,0.1);
+                        border: 1px solid rgba(255,255,255,0.2);
+                        border-radius: 10px;
+                        color: white;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">✕ Cancelar</button>
+                </div>
             </div>
         </div>
         
         <style>
+            /* Botones de Outs */
+            .out-btn {
+                padding: 8px 4px;
+                background: rgba(255,255,255,0.08);
+                border: 1px solid rgba(255,255,255,0.15);
+                border-radius: 6px;
+                color: white;
+                font-size: 11px;
+                cursor: pointer;
+                transition: all 0.15s;
+                font-weight: 500;
+            }
+            
+            .out-btn:active {
+                transform: scale(0.92);
+                background: rgba(255,255,255,0.2);
+            }
+            
             /* Checkboxes Pro (gradiente morado) */
             .custom-checkbox {
                 display: flex;
