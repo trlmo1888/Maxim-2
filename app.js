@@ -14,6 +14,7 @@ const state = {
     currentStack: 'mnemonica',
     customStacks: {}, // Stacks personalizados creados por el usuario
     doubleClickEnabled: true, // Doble click en timer (true = sí, false = no)
+    timerDefault: 15, // Segundos por defecto del timer
     stopMode: 1, // 1 = detener directo, 2 = detener sonido primero
     customStaticOuts: {}, // Se cargará con defaults
     dynamicOutsConfig: {
@@ -906,6 +907,17 @@ function toggleDoubleClick() {
     }
 }
 
+// Actualizar timer default
+function updateTimerDefault() {
+    const select = document.getElementById('timerDefault');
+    if (select) {
+        const seconds = parseInt(select.value);
+        state.timerDefault = seconds;
+        saveState();
+        showNotification(`Timer: ${seconds < 60 ? seconds + 's' : Math.floor(seconds/60) + 'min' + (seconds%60 ? ' ' + (seconds%60) + 's' : '')}`);
+    }
+}
+
 // Actualizar adelantar opción
 function updateAdelantarOpcion() {
     const select = document.getElementById('adelantarOpcion');
@@ -917,7 +929,7 @@ function updateAdelantarOpcion() {
         state.dynamicOutsConfig.sumaMinutos.adelantarSi = 0;
         state.dynamicOutsConfig.sumaMinutos.adelantarMinutos = 0;
     } else if (value.startsWith('manual')) {
-        const mins = parseInt(value.replace('manual', ''));
+        const mins = value === 'manual90' ? 1.5 : parseInt(value.replace('manual', ''));
         state.dynamicOutsConfig.sumaMinutos.adelantarSi = 0;
         state.dynamicOutsConfig.sumaMinutos.adelantarMinutos = mins;
     } else {
@@ -1301,21 +1313,6 @@ document.addEventListener('DOMContentLoaded', function() {
         doubleClickCheckbox.checked = state.doubleClickEnabled !== false;
     }
     
-    const dynSumaMinutos = document.getElementById('dynSumaMinutos');
-    if (dynSumaMinutos) {
-        dynSumaMinutos.checked = state.dynamicOutsConfig?.sumaMinutos?.enabled !== false;
-    }
-    
-    const dynLetrasNombre = document.getElementById('dynLetrasNombre');
-    if (dynLetrasNombre) {
-        dynLetrasNombre.checked = state.dynamicOutsConfig?.letrasNombre?.enabled !== false;
-    }
-    
-    const dynSumaFecha = document.getElementById('dynSumaFecha');
-    if (dynSumaFecha) {
-        dynSumaFecha.checked = state.dynamicOutsConfig?.sumaFecha?.enabled !== false;
-    }
-    
     // Inicializar select de adelantar minutos
     const adelantarSelect = document.getElementById('adelantarOpcion');
     if (adelantarSelect && state.dynamicOutsConfig?.sumaMinutos) {
@@ -1331,19 +1328,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     updateStackDisplay();
     updateHomeStackDisplay();
-    
-    // Añadir listener para botón de ajustes
-    const settingsButton = document.getElementById('settingsButton');
-    console.log('Settings button found:', settingsButton);
-    if (settingsButton) {
-        settingsButton.addEventListener('click', function() {
-            console.log('Settings button clicked!');
-            showScreen('settingsScreen');
-        });
-        console.log('Settings listener added');
-    } else {
-        console.error('Settings button NOT found!');
-    }
     
     console.log('MAXIM: Initialized');
 });
