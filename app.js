@@ -1329,6 +1329,15 @@ document.addEventListener('DOMContentLoaded', function() {
     updateStackDisplay();
     updateHomeStackDisplay();
     
+    // Añadir listener para botón Editar Outs
+    const editOutsBtn = document.getElementById('editOutsButton');
+    if (editOutsBtn) {
+        editOutsBtn.addEventListener('click', function() {
+            showScreen('editOutsScreen');
+            showEditOuts();
+        });
+    }
+    
     console.log('MAXIM: Initialized');
 });
 
