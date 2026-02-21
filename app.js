@@ -1331,11 +1331,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Añadir listener para botón Editar Outs
     const editOutsBtn = document.getElementById('editOutsButton');
+    console.log('Edit Outs button:', editOutsBtn);
     if (editOutsBtn) {
         editOutsBtn.addEventListener('click', function() {
+            console.log('Edit Outs clicked!');
             showScreen('editOutsScreen');
             showEditOuts();
         });
+        console.log('Edit Outs listener added');
+    } else {
+        console.error('Edit Outs button NOT found!');
     }
     
     console.log('MAXIM: Initialized');
