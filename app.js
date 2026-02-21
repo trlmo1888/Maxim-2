@@ -907,15 +907,43 @@ function toggleDoubleClick() {
     }
 }
 
-// Actualizar timer default
-function updateTimerDefault() {
-    const select = document.getElementById('timerDefault');
-    if (select) {
-        const seconds = parseInt(select.value);
-        state.timerDefault = seconds;
+// Popup de Outs
+let currentEditingOut = null;
+
+function openOutPopup(position) {
+    currentEditingOut = position;
+    const currentValue = state.customStaticOuts[position] || defaultStaticOuts[position] || '';
+    
+    document.getElementById('outPopupTitle').textContent = `Editar Out #${position}`;
+    document.getElementById('outPopupTextarea').value = currentValue;
+    document.getElementById('outPopup').style.display = 'flex';
+    
+    // Focus en textarea
+    setTimeout(() => {
+        document.getElementById('outPopupTextarea').focus();
+    }, 100);
+}
+
+function closeOutPopup() {
+    document.getElementById('outPopup').style.display = 'none';
+    currentEditingOut = null;
+}
+
+function saveOutFromPopup() {
+    if (currentEditingOut === null) return;
+    
+    const value = document.getElementById('outPopupTextarea').value.trim();
+    
+    if (value) {
+        state.customStaticOuts[currentEditingOut] = value;
         saveState();
-        showNotification(`Timer: ${seconds < 60 ? seconds + 's' : Math.floor(seconds/60) + 'min' + (seconds%60 ? ' ' + (seconds%60) + 's' : '')}`);
+        showNotification(`Out #${currentEditingOut} guardado`);
+    } else {
+        showNotification('⚠️ El out no puede estar vacío');
+        return;
     }
+    
+    closeOutPopup();
 }
 
 // Actualizar adelantar opción
@@ -1328,20 +1356,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     updateStackDisplay();
     updateHomeStackDisplay();
-    
-    // Añadir listener para botón Editar Outs
-    const editOutsBtn = document.getElementById('editOutsButton');
-    console.log('Edit Outs button:', editOutsBtn);
-    if (editOutsBtn) {
-        editOutsBtn.addEventListener('click', function() {
-            console.log('Edit Outs clicked!');
-            showScreen('editOutsScreen');
-            showEditOuts();
-        });
-        console.log('Edit Outs listener added');
-    } else {
-        console.error('Edit Outs button NOT found!');
-    }
     
     console.log('MAXIM: Initialized');
 });
