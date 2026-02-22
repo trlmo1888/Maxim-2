@@ -1357,6 +1357,30 @@ document.addEventListener('DOMContentLoaded', function() {
     updateStackDisplay();
     updateHomeStackDisplay();
     
+    // Añadir listeners a botones de outs
+    const outsContainer = document.getElementById('outsButtonsContainer');
+    if (outsContainer) {
+        outsContainer.addEventListener('click', function(e) {
+            if (e.target.classList.contains('out-btn')) {
+                const position = parseInt(e.target.dataset.out);
+                openOutPopup(position);
+            }
+        });
+    }
+    
+    // Listeners del popup
+    const saveBtn = document.getElementById('saveOutBtn');
+    const cancelBtn = document.getElementById('cancelOutBtn');
+    const popup = document.getElementById('outPopup');
+    
+    if (saveBtn) saveBtn.addEventListener('click', saveOutFromPopup);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeOutPopup);
+    if (popup) {
+        popup.addEventListener('click', function(e) {
+            if (e.target.id === 'outPopup') closeOutPopup();
+        });
+    }
+    
     console.log('MAXIM: Initialized');
 });
 
