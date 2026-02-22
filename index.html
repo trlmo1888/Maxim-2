@@ -663,7 +663,6 @@
                         border: 1px solid rgba(255,255,255,0.2);
                         border-radius: 8px;
                         font-size: 11px;
-                        margin-bottom: 8px;
                     ">
                         <option value="disabled">🕐 Hora: OFF</option>
                         <option value="10">🕐 Faltan < 10s</option>
@@ -675,47 +674,35 @@
                         <option value="manual90">🕐 +1min 30s siempre</option>
                         <option value="manual2">🕐 +2mins siempre</option>
                     </select>
-                    
-                    <!-- 26 Botones de Outs -->
-                    <div style="font-size: 10px; opacity: 0.6; margin-bottom: 4px;">Outs:</div>
-                    <div id="outsButtonsContainer" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;">
-                        <button data-out="1" class="out-btn">1</button>
-                        <button data-out="2" class="out-btn">2</button>
-                        <button data-out="3" class="out-btn">3</button>
-                        <button data-out="4" class="out-btn">4</button>
-                        <button data-out="5" class="out-btn">5</button>
-                        <button data-out="6" class="out-btn">6</button>
-                        <button data-out="7" class="out-btn">7</button>
-                        <button data-out="8" class="out-btn">8</button>
-                        <button data-out="9" class="out-btn">9</button>
-                        <button data-out="10" class="out-btn">10</button>
-                        <button data-out="11" class="out-btn">11</button>
-                        <button data-out="12" class="out-btn">12</button>
-                        <button data-out="13" class="out-btn">13</button>
-                        <button data-out="14" class="out-btn">14</button>
-                        <button data-out="15" class="out-btn">15</button>
-                        <button data-out="16" class="out-btn">16</button>
-                        <button data-out="17" class="out-btn">17</button>
-                        <button data-out="18" class="out-btn">18</button>
-                        <button data-out="19" class="out-btn">19</button>
-                        <button data-out="20" class="out-btn">20</button>
-                        <button data-out="21" class="out-btn">21</button>
-                        <button data-out="22" class="out-btn">22</button>
-                        <button data-out="23" class="out-btn">23</button>
-                        <button data-out="24" class="out-btn">24</button>
-                        <button data-out="25" class="out-btn">25</button>
-                        <button data-out="26" class="out-btn">26</button>
-                    </div>
                 </div>
+                
+                <!-- CREAR STACK -->
+                <button onclick="showCreateStackPopup()" style="
+                    width: 100%;
+                    padding: 14px;
+                    background: linear-gradient(135deg, rgba(103, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+                    border: 1px solid rgba(118, 75, 162, 0.5);
+                    border-radius: 12px;
+                    color: white;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                ">
+                    ➕ Crear Stack
+                </button>
             </div>
 
-            <div style="flex-shrink: 0; text-align: center; opacity: 0.3; font-size: 10px; padding: 6px 0 10px;">
-                v21
+            <div style="flex-shrink: 0; text-align: center; opacity: 0.3; font-size: 10px; padding: 10px 0;">
+                v22
             </div>
         </div>
         
-        <!-- Popup para editar OUT -->
-        <div id="outPopup" style="
+        <!-- Popup Crear Stack -->
+        <div id="createStackPopup" style="
             display: none;
             position: fixed;
             top: 0;
@@ -734,29 +721,26 @@
                 padding: 20px;
                 max-width: 90%;
                 width: 100%;
-                max-height: 70vh;
-                overflow-y: auto;
+                max-height: 50vh;
                 box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             ">
-                <h3 id="outPopupTitle" style="margin: 0 0 12px; font-size: 16px; font-weight: 600;">Editar Out #1</h3>
+                <h3 style="margin: 0 0 12px; font-size: 16px; font-weight: 600;">Crear Nuevo Stack</h3>
                 
-                <textarea id="outPopupTextarea" style="
+                <input id="newStackName" type="text" placeholder="Nombre del stack..." style="
                     width: 100%;
-                    min-height: 80px;
                     padding: 12px;
                     background: rgba(0,0,0,0.3);
                     border: 2px solid rgba(255,255,255,0.2);
                     border-radius: 10px;
                     color: white;
                     font-size: 14px;
-                    resize: vertical;
                     margin-bottom: 12px;
-                    font-family: inherit;
                     box-sizing: border-box;
-                " placeholder="Escribe tu out aquí..."></textarea>
+                    font-family: inherit;
+                ">
                 
                 <div style="display: flex; gap: 8px;">
-                    <button id="saveOutBtn" style="
+                    <button onclick="createNewStack()" style="
                         flex: 1;
                         padding: 12px;
                         background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
@@ -766,8 +750,8 @@
                         font-size: 14px;
                         font-weight: 600;
                         cursor: pointer;
-                    ">✓ Guardar</button>
-                    <button id="cancelOutBtn" style="
+                    ">✓ Crear</button>
+                    <button onclick="closeCreateStackPopup()" style="
                         flex: 1;
                         padding: 12px;
                         background: rgba(255,255,255,0.1);
@@ -1129,8 +1113,8 @@
         </div>
     </div>
 
-    <script src="./timer.js?v=21"></script>
-    <script src="./app.js?v=21"></script>
+    <script src="./timer.js?v=22"></script>
+    <script src="./app.js?v=22"></script>
 </body>
 </html>
 
