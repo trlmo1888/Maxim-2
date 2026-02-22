@@ -907,43 +907,52 @@ function toggleDoubleClick() {
     }
 }
 
-// Popup de Outs
-let currentEditingOut = null;
-
-function openOutPopup(position) {
-    currentEditingOut = position;
-    const currentValue = state.customStaticOuts[position] || defaultStaticOuts[position] || '';
-    
-    document.getElementById('outPopupTitle').textContent = `Editar Out #${position}`;
-    document.getElementById('outPopupTextarea').value = currentValue;
-    document.getElementById('outPopup').style.display = 'flex';
-    
-    // Focus en textarea
+// Crear Stack
+function showCreateStackPopup() {
+    document.getElementById('createStackPopup').style.display = 'flex';
+    document.getElementById('newStackName').value = '';
     setTimeout(() => {
-        document.getElementById('outPopupTextarea').focus();
+        document.getElementById('newStackName').focus();
     }, 100);
 }
 
-function closeOutPopup() {
-    document.getElementById('outPopup').style.display = 'none';
-    currentEditingOut = null;
+function closeCreateStackPopup() {
+    document.getElementById('createStackPopup').style.display = 'none';
 }
 
-function saveOutFromPopup() {
-    if (currentEditingOut === null) return;
+function createNewStack() {
+    const nameInput = document.getElementById('newStackName');
+    const name = nameInput.value.trim();
     
-    const value = document.getElementById('outPopupTextarea').value.trim();
-    
-    if (value) {
-        state.customStaticOuts[currentEditingOut] = value;
-        saveState();
-        showNotification(`Out #${currentEditingOut} guardado`);
-    } else {
-        showNotification('⚠️ El out no puede estar vacío');
+    if (!name) {
+        showNotification('⚠️ Escribe un nombre para el stack');
         return;
     }
     
-    closeOutPopup();
+    // Crear stack vacío
+    const stackId = 'custom_' + Date.now();
+    
+    if (!state.customStacks) {
+        state.customStacks = {};
+    }
+    
+    state.customStacks[stackId] = {
+        name: name,
+        cards: [], // Stack vacío por ahora
+        createdAt: new Date().toISOString()
+    };
+    
+    // Añadir al objeto stacks global
+    stacks[stackId] = [];
+    
+    // Cambiar a este stack
+    state.currentStack = stackId;
+    
+    saveState();
+    updateStackSelector();
+    
+    showNotification(`✅ Stack "${name}" creado`);
+    closeCreateStackPopup();
 }
 
 // Actualizar adelantar opción
@@ -1356,30 +1365,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     updateStackDisplay();
     updateHomeStackDisplay();
-    
-    // Añadir listeners a botones de outs
-    const outsContainer = document.getElementById('outsButtonsContainer');
-    if (outsContainer) {
-        outsContainer.addEventListener('click', function(e) {
-            if (e.target.classList.contains('out-btn')) {
-                const position = parseInt(e.target.dataset.out);
-                openOutPopup(position);
-            }
-        });
-    }
-    
-    // Listeners del popup
-    const saveBtn = document.getElementById('saveOutBtn');
-    const cancelBtn = document.getElementById('cancelOutBtn');
-    const popup = document.getElementById('outPopup');
-    
-    if (saveBtn) saveBtn.addEventListener('click', saveOutFromPopup);
-    if (cancelBtn) cancelBtn.addEventListener('click', closeOutPopup);
-    if (popup) {
-        popup.addEventListener('click', function(e) {
-            if (e.target.id === 'outPopup') closeOutPopup();
-        });
-    }
     
     console.log('MAXIM: Initialized');
 });
