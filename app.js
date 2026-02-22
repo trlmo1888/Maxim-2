@@ -907,7 +907,127 @@ function toggleDoubleClick() {
     }
 }
 
-// Crear Stack
+// Calculadora de Stack
+let tempRank = null;
+let tempCards = [];
+
+function addRank(rank) {
+    tempRank = rank;
+    // Marcar visualmente
+    document.querySelectorAll('.calc-btn').forEach(btn => {
+        if (btn.textContent === rank) {
+            btn.classList.add('selected');
+            setTimeout(() => btn.classList.remove('selected'), 300);
+        }
+    });
+}
+
+function addSuit(suit) {
+    if (!tempRank) {
+        showNotification('⚠️ Primero elige un rango');
+        return;
+    }
+    
+    const card = tempRank + suit;
+    tempCards.push(card);
+    tempRank = null;
+    
+    updateStackDisplay();
+}
+
+function updateStackDisplay() {
+    const display = document.getElementById('stackCards');
+    const counter = document.getElementById('stackCount');
+    
+    if (tempCards.length === 0) {
+        display.innerHTML = '<span style="opacity: 0.5;">Click rango + palo...</span>';
+    } else {
+        display.textContent = tempCards.join(' ');
+    }
+    
+    counter.textContent = tempCards.length + ' / 52';
+}
+
+function deleteCard() {
+    tempCards.pop();
+    updateStackDisplay();
+}
+
+function saveNewStack() {
+    const nameInput = document.getElementById('newStackName');
+    const name = nameInput.value.trim();
+    
+    if (!name) {
+        showNotification('⚠️ Escribe un nombre');
+        return;
+    }
+    
+    if (tempCards.length !== 52) {
+        showNotification('⚠️ Necesitas 52 cartas (tienes ' + tempCards.length + ')');
+        return;
+    }
+    
+    const stackId = 'custom_' + Date.now();
+    
+    if (!state.customStacks) {
+        state.customStacks = {};
+    }
+    
+    // Convertir cartas a formato stack
+    const stackArray = tempCards.map(card => {
+        const suit = card.slice(-1);
+        const rank = card.slice(0, -1);
+        return { rank, suit };
+    });
+    
+    state.customStacks[stackId] = {
+        name: name,
+        cards: stackArray,
+        createdAt: new Date().toISOString()
+    };
+    
+    stacks[stackId] = stackArray;
+    state.currentStack = stackId;
+    
+    saveState();
+    updateStackSelector();
+    
+    // Limpiar
+    tempCards = [];
+    tempRank = null;
+    nameInput.value = '';
+    updateStackDisplay();
+    
+    showNotification('✅ Stack "' + name + '" creado');
+}
+
+function updateStackSelector() {
+    const select = document.getElementById('stackType');
+    if (!select) return;
+    
+    // Limpiar opciones actuales
+    select.innerHTML = `
+        <option value="mnemonica">Mnemonica (Tamariz)</option>
+        <option value="aronson">Aronson Stack</option>
+        <option value="eight-kings">Eight Kings</option>
+        <option value="si-stebbins">Si Stebbins</option>
+    `;
+    
+    // Añadir custom stacks
+    if (state.customStacks) {
+        Object.keys(state.customStacks).forEach(id => {
+            const stack = state.customStacks[id];
+            const option = document.createElement('option');
+            option.value = id;
+            option.textContent = stack.name;
+            select.appendChild(option);
+        });
+    }
+    
+    select.value = state.currentStack;
+}
+
+// Crear Stack (funciones antiguas - por si acaso)
 function showCreateStackPopup() {
     document.getElementById('createStackPopup').style.display = 'flex';
     document.getElementById('newStackName').value = '';
