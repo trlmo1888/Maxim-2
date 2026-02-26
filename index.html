@@ -676,86 +676,113 @@
                     </select>
                 </div>
                 
-                <!-- CALCULADORA STACK -->
-                <div style="background: rgba(255,255,255,0.08); padding: 10px; border-radius: 12px;">
-                    <input id="newStackName" type="text" placeholder="Nombre del stack..." style="
-                        width: 100%;
-                        padding: 8px;
-                        background: rgba(0,0,0,0.3);
-                        border: 1px solid rgba(255,255,255,0.2);
-                        border-radius: 8px;
-                        color: white;
-                        font-size: 12px;
-                        margin-bottom: 6px;
-                        box-sizing: border-box;
-                    ">
-                    
-                    <div id="stackCards" style="
-                        min-height: 28px;
-                        padding: 6px;
-                        background: rgba(0,0,0,0.3);
-                        border: 1px solid rgba(255,255,255,0.2);
-                        border-radius: 8px;
-                        font-size: 10px;
-                        margin-bottom: 4px;
-                        word-wrap: break-word;
-                    "><span style="opacity: 0.5;">Click rango + palo...</span></div>
-                    
-                    <div id="stackCount" style="font-size: 10px; opacity: 0.6; margin-bottom: 4px; text-align: right;">0 / 52</div>
-                    
-                    <!-- Rangos -->
-                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 3px;">
-                        <button onclick="addRank('A')" class="calc-btn">A</button>
-                        <button onclick="addRank('2')" class="calc-btn">2</button>
-                        <button onclick="addRank('3')" class="calc-btn">3</button>
-                        <button onclick="addRank('4')" class="calc-btn">4</button>
-                        <button onclick="addRank('5')" class="calc-btn">5</button>
-                        <button onclick="addRank('6')" class="calc-btn">6</button>
-                        <button onclick="addRank('7')" class="calc-btn">7</button>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; margin-bottom: 4px;">
-                        <button onclick="addRank('8')" class="calc-btn">8</button>
-                        <button onclick="addRank('9')" class="calc-btn">9</button>
-                        <button onclick="addRank('10')" class="calc-btn">10</button>
-                        <button onclick="addRank('J')" class="calc-btn">J</button>
-                        <button onclick="addRank('Q')" class="calc-btn">Q</button>
-                        <button onclick="addRank('K')" class="calc-btn">K</button>
-                    </div>
-                    
-                    <!-- Palos -->
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; margin-bottom: 4px;">
-                        <button onclick="addSuit('♠')" class="calc-btn" style="font-size: 14px;">♠</button>
-                        <button onclick="addSuit('♥')" class="calc-btn" style="font-size: 14px; color: #ff6b6b;">♥</button>
-                        <button onclick="addSuit('♦')" class="calc-btn" style="font-size: 14px; color: #ff6b6b;">♦</button>
-                        <button onclick="addSuit('♣')" class="calc-btn" style="font-size: 14px;">♣</button>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3px;">
-                        <button onclick="deleteCard()" style="
-                            padding: 6px;
-                            background: rgba(255,100,100,0.2);
-                            border: 1px solid rgba(255,100,100,0.4);
-                            border-radius: 6px;
-                            color: white;
-                            font-size: 10px;
-                            cursor: pointer;
-                        ">⌫</button>
-                        <button onclick="saveNewStack()" style="
-                            padding: 6px;
-                            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-                            border: none;
-                            border-radius: 6px;
-                            color: white;
-                            font-size: 10px;
-                            font-weight: 600;
-                            cursor: pointer;
-                        ">✓ Guardar</button>
-                    </div>
-                </div>
+                <!-- BOTON CREAR STACK -->
+                <button id="createStackBtn" style="
+                    width: 100%;
+                    padding: 14px;
+                    background: linear-gradient(135deg, rgba(103, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+                    border: 1px solid rgba(118, 75, 162, 0.5);
+                    border-radius: 12px;
+                    color: white;
+                    font-size: 14px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                ">
+                    ➕ Crear Stack
+                </button>
             </div>
 
             <div style="flex-shrink: 0; text-align: center; opacity: 0.3; font-size: 10px; padding: 8px 0;">
-                v23
+                v25
+            </div>
+        </div>
+        
+        <!-- PANTALLA CREAR STACK -->
+        <div id="createStackScreen" class="screen">
+            <div class="header">
+                <button class="back-button" id="backFromCreate">←</button>
+                <div class="header-title">Crear Stack</div>
+            </div>
+            
+            <div style="padding: 15px; height: calc(100vh - 80px); overflow-y: auto;">
+                <!-- CALCULADORA -->
+                <input id="newStackName" type="text" placeholder="Nombre del stack..." style="
+                    width: 100%;
+                    padding: 10px;
+                    background: rgba(0,0,0,0.3);
+                    border: 1px solid rgba(255,255,255,0.2);
+                    border-radius: 8px;
+                    color: white;
+                    font-size: 14px;
+                    margin-bottom: 8px;
+                    box-sizing: border-box;
+                ">
+                
+                <div id="stackCards" style="
+                    min-height: 40px;
+                    padding: 10px;
+                    background: rgba(0,0,0,0.3);
+                    border: 1px solid rgba(255,255,255,0.2);
+                    border-radius: 8px;
+                    font-size: 12px;
+                    margin-bottom: 6px;
+                    word-wrap: break-word;
+                "><span style="opacity: 0.5;">Click rango + palo...</span></div>
+                
+                <div id="stackCount" style="font-size: 12px; opacity: 0.6; margin-bottom: 10px; text-align: right;">0 / 52</div>
+                
+                <!-- Rangos -->
+                <div id="ranksContainer" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 6px;">
+                    <button data-rank="A" class="calc-btn">A</button>
+                    <button data-rank="2" class="calc-btn">2</button>
+                    <button data-rank="3" class="calc-btn">3</button>
+                    <button data-rank="4" class="calc-btn">4</button>
+                    <button data-rank="5" class="calc-btn">5</button>
+                    <button data-rank="6" class="calc-btn">6</button>
+                    <button data-rank="7" class="calc-btn">7</button>
+                </div>
+                <div id="ranksContainer2" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-bottom: 8px;">
+                    <button data-rank="8" class="calc-btn">8</button>
+                    <button data-rank="9" class="calc-btn">9</button>
+                    <button data-rank="10" class="calc-btn">10</button>
+                    <button data-rank="J" class="calc-btn">J</button>
+                    <button data-rank="Q" class="calc-btn">Q</button>
+                    <button data-rank="K" class="calc-btn">K</button>
+                </div>
+                
+                <!-- Palos -->
+                <div id="suitsContainer" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px;">
+                    <button data-suit="♠" class="calc-btn" style="font-size: 18px; padding: 14px;">♠</button>
+                    <button data-suit="♥" class="calc-btn" style="font-size: 18px; padding: 14px; color: #ff6b6b;">♥</button>
+                    <button data-suit="♦" class="calc-btn" style="font-size: 18px; padding: 14px; color: #ff6b6b;">♦</button>
+                    <button data-suit="♣" class="calc-btn" style="font-size: 18px; padding: 14px;">♣</button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <button id="deleteCardBtn" style="
+                        padding: 12px;
+                        background: rgba(255,100,100,0.2);
+                        border: 1px solid rgba(255,100,100,0.4);
+                        border-radius: 8px;
+                        color: white;
+                        font-size: 12px;
+                        cursor: pointer;
+                    ">⌫ Borrar</button>
+                    <button id="saveStackBtn" style="
+                        padding: 12px;
+                        background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+                        border: none;
+                        border-radius: 8px;
+                        color: white;
+                        font-size: 12px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">✓ Guardar</button>
+                </div>
             </div>
         </div>
         
@@ -1128,9 +1155,9 @@
         </div>
     </div>
 
-    <script src="./timer.js?v=23"></script>
-    <script src="./stack-creator.js?v=23"></script>
-    <script src="./app.js?v=23"></script>
+    <script src="./timer.js?v=25"></script>
+    <script src="./stack-creator.js?v=25"></script>
+    <script src="./app.js?v=25"></script>
 </body>
 </html>
 
