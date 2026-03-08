@@ -347,53 +347,45 @@
         .reveal-methods {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            padding: 20px;
+            gap: 15px;
         }
 
         .reveal-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 24px;
-            padding: 32px 24px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
         }
 
         .reveal-card h3 {
-            font-size: 18px;
+            font-size: 16px;
             color: #ffffff;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+            gap: 8px;
         }
 
         .reveal-card p {
-            font-size: 16px;
-            line-height: 1.8;
-            opacity: 0.95;
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.9;
             color: #ffffff;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .reveal-number {
-            font-size: 56px;
-            font-weight: 300;
+            font-size: 28px;
+            font-weight: 900;
             color: #ffffff;
-            margin: 24px 0;
-            letter-spacing: -2px;
-            text-shadow: 0 4px 16px rgba(255,255,255,0.2);
+            margin: 12px 0;
         }
 
         .reveal-instruction {
-            font-size: 20px;
+            font-size: 15px;
             font-weight: 600;
             color: #ffffff;
-            line-height: 1.6;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            line-height: 1.5;
         }
 
         .timer-launch-btn {
@@ -611,146 +603,37 @@
         <div id="notification" class="notification"></div>
 
         <!-- Main Screen -->
-        <div id="mainScreen" class="screen active" style="display: flex; flex-direction: column; min-height: 100vh; padding: 30px 20px;">
-            <div class="logo-section" style="flex-shrink: 0; padding: 10px 0 15px;">
+        <div id="mainScreen" class="screen active" style="display: flex; flex-direction: column; height: 100vh; padding: 20px;">
+            <div class="logo-section" style="flex-shrink: 0; margin-bottom: 20px;">
                 <div class="logo-circle">
                     <span class="letter">M</span>
                 </div>
                 <div class="app-name">MAXIM ACAAN</div>
             </div>
 
-            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px;">
-                <button class="perform-button" onclick="showTimerFirst()">
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0;">
+                <button class="perform-button" onclick="showTimerFirst()" style="margin-bottom: 20px;">
                     <div class="play-icon"></div>
                     <span>Ejecutar</span>
                 </button>
 
-                <div style="background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.08) 100%); padding: 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-                    <h3 style="font-size: 15px; margin-bottom: 16px; opacity: 0.85; font-weight: 600;">Stack Actual</h3>
-                    <select id="stackType" onchange="changeStack()" style="
-                        width: 100%;
-                        padding: 16px;
-                        background: rgba(0,0,0,0.2);
-                        color: white;
-                        border: 2px solid rgba(255,255,255,0.25);
-                        border-radius: 14px;
-                        font-size: 16px;
-                        font-weight: 500;
-                        cursor: pointer;
-                        transition: all 0.2s;
-                    ">
-                        <option value="mnemonica">Mnemonica (Tamariz)</option>
-                        <option value="aronson">Aronson Stack</option>
-                        <option value="eight-kings">Eight Kings</option>
-                        <option value="si-stebbins">Si Stebbins</option>
-                    </select>
+                <div class="menu-grid" style="grid-template-columns: 1fr;">
+                    <button class="menu-item" onclick="showScreen('settingsScreen')">
+                        <div class="menu-icon">⚙️</div>
+                        <div class="menu-label">Ajustes</div>
+                    </button>
                 </div>
             </div>
 
-            <div style="flex-shrink: 0; text-align: center; opacity: 0.4; font-size: 11px; padding: 20px 0 10px;">
-                MAXIM v27 · Créditos: T.P.
+            <div style="flex-shrink: 0; text-align: center; opacity: 0.7; font-size: 14px; padding-top: 20px;">
+                <div id="currentStackDisplay" style="margin-bottom: 8px;">
+                    Stack: <span id="stackNameHome">Mnemonica</span>
+                </div>
+                <div style="opacity: 0.5; font-size: 12px;">
+                    Créditos: T.P.
+                </div>
             </div>
         </div>
-        
-        <style>
-            .calc-btn {
-                padding: 8px 2px;
-                background: rgba(255,255,255,0.08);
-                border: 1px solid rgba(255,255,255,0.15);
-                border-radius: 6px;
-                color: white;
-                font-size: 11px;
-                cursor: pointer;
-                transition: all 0.15s;
-                font-weight: 500;
-            }
-            
-            .calc-btn:active {
-                transform: scale(0.92);
-                background: rgba(255,255,255,0.2);
-            }
-            
-            .calc-btn.selected {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border-color: #764ba2;
-            }
-            
-            /* Botones de Outs */
-            .out-btn {
-                padding: 8px 4px;
-                background: rgba(255,255,255,0.08);
-                border: 1px solid rgba(255,255,255,0.15);
-                border-radius: 6px;
-                color: white;
-                font-size: 11px;
-                cursor: pointer;
-                transition: all 0.15s;
-                font-weight: 500;
-            }
-            
-            .out-btn:active {
-                transform: scale(0.92);
-                background: rgba(255,255,255,0.2);
-            }
-            
-            /* Checkboxes Pro (gradiente morado) */
-            .custom-checkbox {
-                display: flex;
-                align-items: center;
-                cursor: pointer;
-                position: relative;
-                padding-left: 24px;
-            }
-            
-            .custom-checkbox input[type="checkbox"] {
-                position: absolute;
-                opacity: 0;
-                cursor: pointer;
-                height: 0;
-                width: 0;
-            }
-            
-            .custom-checkbox .checkmark {
-                position: absolute;
-                left: 0;
-                height: 16px;
-                width: 16px;
-                background-color: rgba(0,0,0,0.3);
-                border: 2px solid rgba(255,255,255,0.3);
-                border-radius: 4px;
-                transition: all 0.2s ease;
-            }
-            
-            .custom-checkbox:hover input ~ .checkmark {
-                background-color: rgba(255,255,255,0.1);
-            }
-            
-            .custom-checkbox input:checked ~ .checkmark {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                border-color: #764ba2;
-            }
-            
-            .custom-checkbox .checkmark:after {
-                content: "";
-                position: absolute;
-                display: none;
-                left: 4px;
-                top: 1px;
-                width: 4px;
-                height: 8px;
-                border: solid white;
-                border-width: 0 2px 2px 0;
-                transform: rotate(45deg);
-            }
-            
-            .custom-checkbox input:checked ~ .checkmark:after {
-                display: block;
-            }
-            
-            .custom-checkbox .label-text {
-                user-select: none;
-            }
-        </style>
 
         <!-- Perform Screen - Step 1: Select Suit -->
         <div id="performScreen" class="perform-screen">
@@ -866,106 +749,143 @@
             </div>
 
             <div style="padding: 20px; height: calc(100vh - 80px); overflow-y: auto;">
-                
-                <!-- 1. DOBLE CLICK -->
                 <div class="settings-group">
-                    <h3>⏱️ Alarma del Timer</h3>
-                    <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px;">
-                        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-                            <span style="font-size: 15px;">Doble Click</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="doubleClickEnabled" checked onchange="toggleDoubleClick()">
-                                <span class="slider"></span>
-                            </label>
-                        </label>
-                        <p style="font-size: 12px; opacity: 0.7; margin-top: 10px; line-height: 1.5;">
-                            <strong>Activado:</strong> 1º click = para alarma, 2º click = continúa<br>
-                            <strong>Desactivado:</strong> 1º click = para alarma y continúa
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 2. EDITOR DE OUTS -->
-                <div class="settings-group">
-                    <h3>📝 Static Outs</h3>
-                    <button onclick="showScreen('editOutsScreen')" style="
+                    <h3>Tipo de Stack</h3>
+                    <select id="stackType" onchange="changeStack()">
+                        <option value="mnemonica">Mnemonica (Tamariz)</option>
+                        <option value="aronson">Aronson Stack</option>
+                        <option value="eight-kings">Eight Kings</option>
+                        <option value="si-stebbins">Si Stebbins</option>
+                    </select>
+                    
+                    <button onclick="showScreen('stackScreen')" style="
+                        margin-top: 15px;
                         width: 100%;
-                        padding: 16px;
-                        background: linear-gradient(135deg, rgba(103, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
-                        border: 1px solid rgba(118, 75, 162, 0.5);
+                        padding: 15px;
+                        background: linear-gradient(135deg, #c83e51 0%, #e84a5f 100%);
+                        border: none;
                         border-radius: 12px;
                         color: white;
                         font-size: 16px;
                         font-weight: 600;
                         cursor: pointer;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        gap: 8px;
-                    ">
-                        ✏️ Editar Static Outs
-                    </button>
+                    ">Ver Stack Completo</button>
                 </div>
 
-                <!-- 3. DYNAMIC OUTS - SUMA MINUTOS -->
                 <div class="settings-group">
-                    <h3>⚡ Dynamic Outs</h3>
+                    <h3>Modo Detener Timer</h3>
+                    <select id="stopMode" onchange="changeStopMode()">
+                        <option value="1">Modo 1: Detener directo</option>
+                        <option value="2">Modo 2: Parar sonido primero</option>
+                    </select>
+                    <p style="font-size: 12px; opacity: 0.7; margin-top: 10px;">
+                        Modo 1: Al detener va directo a siguiente pantalla<br>
+                        Modo 2: Primera vez para sonido, segunda vez continúa
+                    </p>
+                </div>
+
+                <div class="settings-group">
+                    <h3>Static Outs</h3>
+                    <button onclick="showScreen('editOutsScreen')" style="
+                        width: 100%;
+                        padding: 15px;
+                        background: linear-gradient(135deg, #c83e51 0%, #e84a5f 100%);
+                        border: none;
+                        border-radius: 12px;
+                        color: white;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    ">Editar Static Outs</button>
+                </div>
+
+                <div class="settings-group">
+                    <h3>Dynamic Outs</h3>
                     
-                    <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
-                        <label style="display: flex; align-items: center; margin-bottom: 12px;">
-                            <input type="checkbox" id="dynSumaMinutos" checked onchange="toggleDynamicOut('sumaMinutos')" style="margin-right: 10px; width: 20px; height: 20px;">
-                            <span style="font-size: 15px; font-weight: 600;">Suma de Minutos</span>
+                    <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <input type="checkbox" id="dynSumaMinutos" onchange="toggleDynamicOut('sumaMinutos')" style="margin-right: 10px;">
+                        <span>Suma de Minutos</span>
+                    </label>
+                    
+                    <div id="sumaMinutosConfig" style="margin-left: 25px; margin-bottom: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                        <p style="font-size: 11px; opacity: 0.7; margin-bottom: 10px;">Elige UNA opción:</p>
+                        
+                        <label style="display: block; font-size: 12px; margin-bottom: 8px;">
+                            <strong>Opción A:</strong> Si faltan menos de
+                            <input type="number" id="adelantarSi" value="12" min="0" max="59" 
+                                onchange="updateDynamicConfig('sumaMinutos', 'adelantarSi', this.value)"
+                                style="width: 50px; margin: 0 3px; padding: 4px; border-radius: 4px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                            segs → Adelanta <strong>1 minuto</strong>
+                            <span style="font-size: 10px; opacity: 0.6; display: block; margin-top: 3px;">
+                                (Poner 0 para desactivar)
+                            </span>
                         </label>
                         
-                        <div id="sumaMinutosConfig">
-                            <p style="font-size: 12px; opacity: 0.7; margin-bottom: 12px;">Adelantar minuto automáticamente:</p>
-                            
-                            <select id="adelantarOpcion" onchange="updateAdelantarOpcion()" style="
-                                width: 100%;
-                                padding: 12px;
-                                background: rgba(0,0,0,0.3);
-                                color: white;
-                                border: 1px solid rgba(255,255,255,0.2);
-                                border-radius: 8px;
-                                font-size: 14px;
-                                margin-bottom: 8px;
-                            ">
-                                <option value="disabled">Desactivado</option>
-                                <option value="10" selected>Si faltan menos de 10 segundos</option>
-                                <option value="15">Si faltan menos de 15 segundos</option>
-                                <option value="20">Si faltan menos de 20 segundos</option>
-                                <option value="25">Si faltan menos de 25 segundos</option>
-                                <option value="manual1">Adelantar siempre 1 minuto</option>
-                                <option value="manual2">Adelantar siempre 2 minutos</option>
-                            </select>
-                            
-                            <p style="font-size: 11px; opacity: 0.6; line-height: 1.4;">
-                                Ejemplo: Si son las 16:58 y faltan 8 segs para las 16:59, el sistema suma 5+9=14
-                            </p>
-                        </div>
+                        <label style="display: block; font-size: 12px; margin-top: 8px;">
+                            <strong>Opción B:</strong> Adelantar siempre
+                            <input type="number" id="adelantarMinutos" value="0" min="0" max="10"
+                                onchange="updateDynamicConfig('sumaMinutos', 'adelantarMinutos', this.value)"
+                                style="width: 50px; margin: 0 3px; padding: 4px; border-radius: 4px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                            minutos
+                            <span style="font-size: 10px; opacity: 0.6; display: block; margin-top: 3px;">
+                                (Poner 0 para desactivar)
+                            </span>
+                        </label>
                     </div>
                     
-                    <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
-                        <label style="display: flex; align-items: center;">
-                            <input type="checkbox" id="dynLetrasNombre" checked onchange="toggleDynamicOut('letrasNombre')" style="margin-right: 10px; width: 20px; height: 20px;">
-                            <span style="font-size: 15px; font-weight: 600;">Letras del Nombre</span>
-                        </label>
-                        <p style="font-size: 12px; opacity: 0.7; margin-top: 8px;">
-                            Busca cartas del stack con igual número de letras
-                        </p>
-                    </div>
+                    <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <input type="checkbox" id="dynLetrasNombre" onchange="toggleDynamicOut('letrasNombre')" style="margin-right: 10px;">
+                        <span>Letras del Nombre</span>
+                    </label>
                     
-                    <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px;">
-                        <label style="display: flex; align-items: center;">
-                            <input type="checkbox" id="dynSumaFecha" checked onchange="toggleDynamicOut('sumaFecha')" style="margin-right: 10px; width: 20px; height: 20px;">
-                            <span style="font-size: 15px; font-weight: 600;">Suma de Fecha</span>
+                    <label style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <input type="checkbox" id="dynSumaFecha" onchange="toggleDynamicOut('sumaFecha')" style="margin-right: 10px;">
+                        <span>Suma de Fecha</span>
+                    </label>
+                </div>
+
+                <div class="settings-group">
+                    <h3>Opciones de Revelación</h3>
+                    <div class="setting-item">
+                        <span>Revelación por Fecha</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="dateReveal" checked>
+                            <span class="slider"></span>
                         </label>
-                        <p style="font-size: 12px; opacity: 0.7; margin-top: 8px;">
-                            Suma todos los dígitos de la fecha actual
-                        </p>
+                    </div>
+                    <div class="setting-item">
+                        <span>Revelación por Deletreo</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="spellingReveal" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Revelación por Cumpleaños</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="birthdayReveal" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>Función Temporizador</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="timerFeature" checked>
+                            <span class="slider"></span>
+                        </label>
                     </div>
                 </div>
 
+                <div class="settings-group">
+                    <h3>Notificaciones</h3>
+                    <div class="setting-item">
+                        <span>Vibración</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="vibrationOn" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1021,8 +941,8 @@
         </div>
     </div>
 
-    <script src="./timer.js?v=27"></script>
-    <script src="./app.js?v=27"></script>
+    <script src="./timer.js?v=99"></script>
+    <script src="./app.js?v=99"></script>
 </body>
 </html>
 
